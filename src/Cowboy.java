@@ -1,5 +1,3 @@
-
-
 import javax.swing.ImageIcon;
 
 public class Cowboy {
@@ -8,9 +6,9 @@ public class Cowboy {
     ImageIcon image;
 
     public Cowboy(int x, int y, ImageIcon image) {
-		this.x = x;
-		this.y = y;
-		this.image = image;
+        this.x = x;
+        this.y = y;
+        this.image = image;
     }
 
     public void setX(int x)

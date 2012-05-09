@@ -1,7 +1,5 @@
-//	import java.io.*;
 import com.ericsson.otp.erlang.*;
 import java.util.Hashtable;
-import java.util.Random;
 
 public class ErlController implements Runnable {
 	private String nodeName = "sigui";
@@ -16,7 +14,6 @@ public class ErlController implements Runnable {
 
 	public ErlController(World world) {
                 this.world = world;
-		// TODO Auto-generated constructor stub
 	}
 
 	public void run() {
