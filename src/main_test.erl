@@ -1,22 +1,32 @@
--module(main).
--export([start/0]).
+-module(main_test).
+-export([start_test/0]).
 
-start()->
-    Main = self(),
-    spawn(fun()-> human:inithumanplayer(Main) end),
+%% -include_lib("eunit/include/eunit.hrl").
+%% % 14.06 sadasdasasd
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% %%			   EUnit Test Cases                                     %%
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% %% All functions with names ending wiht _test() or _test_() will be
+%% %% called automatically by make test
+
+start_test()->
+%%  spawn(fun() -> bot_test:init_test(Main) end),
+    HmnPID = spawn(fun()-> human_test:init_test() end),
     Dict = dict:new(),
     io:format("DICT WHEN STARTED: ~p",[Dict]),
-    mainloop([], Dict).
+    mainloop(HmnPID, Dict).
 
 mainloop(UserPIDs, MapDict) ->
     receive
-	{register, PID,Coordinates} ->
-	    io:format("Player ~p registered! ~n", [PID]),
-	    MapDict2 = dict:store(Coordinates, PID, MapDict),
+	{register, HmnPID,Coordinates} ->
+	    io:format("Player ~p registered! ~n", [HmnPID]),
+	    MapDict2 = dict:store(Coordinates, HmnPID, MapDict),
 	    
-	    io:format("Player ~p registered in world: ~p", [PID,dict:find(Coordinates, MapDict2)]),
+	    io:format("Player ~p registered in world: ~p", [HmnPID,dict:find(Coordinates, MapDict2)]),
 	    
-	    mainloop([PID | UserPIDs], MapDict2);
+	    mainloop([HmnPID | UserPIDs], MapDict2);
 
 	{walk, GunmanPID, Direction, {CoordinateX,CoordinateY}} ->
 	    case Direction of
@@ -103,7 +113,11 @@ mainloop(UserPIDs, MapDict) ->
 		    io:format("Invalid input, try again! ~n"),	
 		    GunmanPID ! {newposition, {CoordinateX,CoordinateY}},
 		    mainloop(UserPIDs, MapDict)	      
-	    end 
+	    end,
+	    io:format("PIDS: ~p ~n",[UserPIDs]),
+	    Poss = dict:fetch(UserPIDs,MapDict),
+	    io:format("Poss: ~p ~n",[Poss])
+%%	    ?assertEqual({11,0},Poss),
     end.
 
 checkMap(MapDict, Coordinates) ->

@@ -1,13 +1,13 @@
 -module(bot_test).
--include_lib("eunit/include/eunit.hrl").
-% 14.06 sadasdasasd
+%% -include_lib("eunit/include/eunit.hrl").
+%% % 14.06 sadasdasasd
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%			   EUnit Test Cases                                  %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% %%			   EUnit Test Cases                                  %%
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% All functions with names ending wiht _test() or _test_() will be
-%% called automatically by make test
+%% %% All functions with names ending wiht _test() or _test_() will be
+%% %% called automatically by make test
 
 %borttest(Main) ->
   % timer:sleep(10000),
