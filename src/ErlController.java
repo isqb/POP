@@ -56,6 +56,7 @@ public class ErlController implements Runnable {
                                         else {
                                             world.createCowboy(pid, newX, newY);
                                         }
+                                        world.paint();
 				}
 			} catch(OtpErlangExit e) {
 				System.out.println("error: " + e);

@@ -3,7 +3,7 @@
 
 inithumanplayer(MainPID) ->
     random:seed(now()),
-    Coordinates ={89,0}, %% {random:uniform(100),random:uniform(100)},
+    Coordinates = {random:uniform(24),random:uniform(24)},
     MainPID ! {register, self(),Coordinates},
     GunmanPID = self(),
     InputPID = spawn(fun() -> walk(MainPID,GunmanPID) end), 
@@ -16,6 +16,7 @@ walk(MainPID,GunmanPID) ->
 	    io:format("~p~n",[{"Where do you want to go now...", self(), Newcoordinates}]),
 	    {ok, Direction} = io:fread("...East,West,North or South?    ","~s"),
 	    MainPID ! {walk, GunmanPID, Direction, Newcoordinates},
+	    
 	    walk(MainPID,GunmanPID);
 	exit ->
 	    io:format("Input process with PID ~p exited~n",[self()])
@@ -23,8 +24,9 @@ walk(MainPID,GunmanPID) ->
 
 humanloop(MainPID,InputPID) ->
     receive
-	{newposition, Newcoordinates} ->
-	    InputPID ! {walk, Newcoordinates},
+	{newposition, {CoordinateX,CoordinateY}} ->
+	    InputPID ! {walk, {CoordinateX,CoordinateY}},
+	    {gui,'sigui@sernander'} ! {self(),CoordinateX,CoordinateY},
 	    humanloop(MainPID,InputPID);
 	exit ->
 	    InputPID ! exit,

@@ -15,12 +15,12 @@ public class GridSimulate extends Thread
 		}
 
 		while (true) {
-			world.paint();
-			try {
+			//world.paint();
+			/*try {
                                 Thread.sleep(500);
 			} catch (InterruptedException e) {
 				System.out.println("fail simulation at: " + e);
-			}
+			}*/
 		}
 	}
 }

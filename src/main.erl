@@ -3,8 +3,19 @@
 
 start()->
     Main = self(),
+    %% spawn(fun()-> bot:initbot(Main) end),
+    %% timer:sleep(400),
+    %% spawn(fun()-> bot:initbot(Main) end),
+    %% timer:sleep(400),
+    %% spawn(fun()-> bot:initbot(Main) end),
+    %% timer:sleep(400),
+    %% spawn(fun()-> bot:initbot(Main) end),
+    %% timer:sleep(400),
+    %% spawn(fun()-> bot:initbot(Main) end),
+    %% timer:sleep(400),
     spawn(fun()-> bot:initbot(Main) end),
-   % spawn(fun()-> human:inithumanplayer(Main) end),
+    timer:sleep(1000),
+    spawn(fun()-> human:inithumanplayer(Main) end),
     Dict = dict:new(),
  %   io:format("DICT WHEN STARTED: ~p",[Dict]),
     mainloop([], Dict).
@@ -21,7 +32,7 @@ mainloop(UserPIDs, MapDict) ->
 
 	{walk, GunmanPID, Direction, {CoordinateX,CoordinateY}} ->
 	    case Direction of
-		["w"] ->
+		["a"] ->
 		    if CoordinateX<1 ->
 			    GunmanPID ! {newposition, {CoordinateX,CoordinateY}},
 			    mainloop(UserPIDs,MapDict);	    
@@ -42,8 +53,8 @@ mainloop(UserPIDs, MapDict) ->
 				    mainloop(UserPIDs,MapDict)
 			    end
 		    end;
-		["e"] ->
-		    if CoordinateX>99 ->
+		["d"] ->
+		    if CoordinateX>23 ->
 			    GunmanPID ! {newposition, {CoordinateX,CoordinateY}},
 			    mainloop(UserPIDs, MapDict);
 		       true ->
@@ -60,8 +71,8 @@ mainloop(UserPIDs, MapDict) ->
 				    mainloop(UserPIDs,MapDict)			 
 			    end
 		    end;
-		["n"] ->
-		    if CoordinateY>99 ->
+		["s"] ->
+		    if CoordinateY>23 ->
 			    GunmanPID ! {newposition, {CoordinateX,CoordinateY}},
 			    mainloop(UserPIDs, MapDict);
 		       true ->
@@ -78,7 +89,7 @@ mainloop(UserPIDs, MapDict) ->
 				    mainloop(UserPIDs,MapDict)			 
 			    end
 		    end;
-		["s"] ->
+		["w"] ->
 		    if CoordinateY<1 ->
 			    GunmanPID ! {newposition, {CoordinateX,CoordinateY}},
 			    mainloop(UserPIDs, MapDict);

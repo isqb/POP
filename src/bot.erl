@@ -3,10 +3,10 @@
 
 initbot(MainPID) ->
     random:seed(now()),
-    Coordinates = {10,0},
+    Coordinates = {random:uniform(24),random:uniform(24)},
     MainPID ! {register, self(),Coordinates},
     random:seed(now()),
-    Direction = lists:nth(random:uniform(4),[["w"],["e"],["n"],["s"]]),
+    Direction = lists:nth(random:uniform(4),[["w"],["a"],["d"],["s"]]),
     MainPID ! {walk, self(), Direction, Coordinates},
     botloop(MainPID).
 
@@ -15,9 +15,9 @@ botloop(MainPID) ->
 	{newposition, {CoordinateX,CoordinateY}} ->
 	    io:format("BOT: ~p ~n", [{CoordinateX,CoordinateY, self()}]),
 	    {gui,'sigui@sernander'} ! {self(),CoordinateX,CoordinateY},
-	    timer:sleep(1000),
+	    timer:sleep(50),
 	    random:seed(now()),
-	    Direction = lists:nth(random:uniform(4),[["w"],["e"],["n"],["s"]]),
+	    Direction = lists:nth(random:uniform(4),[["w"],["a"],["d"],["s"]]),
 	    MainPID ! {walk, self(), Direction, {CoordinateX,CoordinateY}},
 	    botloop(MainPID);
 	exit ->
