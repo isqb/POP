@@ -8,33 +8,52 @@
 %% All functions with names ending wiht _test() or _test_() will be
 %% called automatically by make test
 
-aborttest(Main) ->
-    timer:sleep(10000),
-    Main ! abort.
+%borttest(Main) ->
+  % timer:sleep(10000),
+ %  Main ! abort.
 
 init_test() ->
     Main = self(),
-    spawn(fun() -> bot:initbot(Main) end), %%Spawn a bot for testing
-    spawn(fun() -> aborttest(Main) end), %%Spawn a process to abort this test and fail after timeout
+    InitPID = spawn(fun() -> bot:initbot(Main) end), %%Spawn a bot for testing
+  % AbortPID = spawn(fun() -> aborttest(Main) end), %%Spawn a process to abort this test and fail after timeout
     receive
 	{register, _PID,_Coordinates} ->
-	    Success = true;
-	abort ->
-	    Success = false
+	    Success = true
+%	abort ->
+%	    Success = false
     end,
-    ?assertEqual(Success,true).
+    exit(InitPID,normal),
+  % exit(AbortPID,normal),
+    ?assertEqual(true,Success).
 
-loop_test() ->
+looptest() ->
     Main = self(),
-    spawn(fun() -> aborttest(Main) end), %%Spawn a process to abort this test and fail after timeout
+    %AbortPID = spawn(fun() -> aborttest(Main) end), %%Spawn a process to abort this test and fail after timeout
     LoopPID = spawn(fun() -> bot:initbot(Main) end), %%Spawn a botloop process for testing
     LoopPID ! {newposition, {10,1}},
     timer:sleep(100),
     receive 
-	{walk, PID, Direction, Coordinates} ->
-	    Result = Coordinates;
-	abort ->
-	    Result = {0,0}
+	{walk, PID1, Direction1, Coordinates1} ->
+	    io:format("First walk: ~p~n",[Coordinates1]),
+	    Result1 = Coordinates1	
+%	abort ->
+	   % Result1 = {0,0}
     end,
-    io:format("~n~n RESULT = ~p ~n ~n",[Result]), 
-    ?assertEqual({10,1},Result).
+    receive 
+	{walk, PID2, Direction2, Coordinates2} ->
+	    io:format("Second walk: ~p~n",[Coordinates2]),
+	    Result2 = Coordinates2
+%	abort ->
+	   % Result2 = {0,0}
+    end,
+    io:format("~n~n RESULT = ~p ~n ~n",[Result2]),
+    exit(LoopPID,normal),
+%   exit(AbortPID,normal),
+    {Result1,Result2}.
+
+loop_test()->
+    Result = looptest(),
+    io:format("RESULT FROM LOOPTEST: ~p~n",[Result]),
+    ?assertEqual({{10,0},{10,1}},Result).
+    
+    
