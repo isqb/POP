@@ -40,6 +40,7 @@ doc: $(BEAM_FILES)
 clean:
 	rm -fr .#* *.dump
 	rm -fr ebin/*.beam
+	rm -fr src/*.beam
 	(cd doc/html && find . -name "*" -a ! -name overview.edoc -exec rm -rf {} \;)
 
 remove_finderinfo:
