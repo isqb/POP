@@ -3,9 +3,10 @@
 
 start()->
     Main = self(),
-    spawn(fun()-> human:inithumanplayer(Main) end),
+    spawn(fun()-> bot:initbot(Main) end),
+   % spawn(fun()-> human:inithumanplayer(Main) end),
     Dict = dict:new(),
-    io:format("DICT WHEN STARTED: ~p",[Dict]),
+ %   io:format("DICT WHEN STARTED: ~p",[Dict]),
     mainloop([], Dict).
 
 mainloop(UserPIDs, MapDict) ->
@@ -14,7 +15,7 @@ mainloop(UserPIDs, MapDict) ->
 	    io:format("Player ~p registered! ~n", [PID]),
 	    MapDict2 = dict:store(Coordinates, PID, MapDict),
 	    
-	    io:format("Player ~p registered in world: ~p", [PID,dict:find(Coordinates, MapDict2)]),
+%	    io:format("Player ~p registered in world: ~p", [PID,dict:find(Coordinates, MapDict2)]),
 	    
 	    mainloop([PID | UserPIDs], MapDict2);
 
@@ -28,14 +29,14 @@ mainloop(UserPIDs, MapDict) ->
 			    FreeSpace = checkMap(MapDict,{CoordinateX-1,CoordinateY}),
 			    if FreeSpace ->
 				    GunmanPID ! {newposition, {CoordinateX-1,CoordinateY}},
-				    io:format("Before erase: ~p ~n", [MapDict]),
+				%    io:format("Before erase: ~p ~n", [MapDict]),
 				    MapDict2 = dict:erase({CoordinateX,CoordinateY}, MapDict),
-				    io:format("After erase: ~p ~n", [MapDict2]),
+			%	    io:format("After erase: ~p ~n", [MapDict2]),
 				    MapDict3 = dict:store({CoordinateX-1,CoordinateY}, GunmanPID, MapDict2),  
-				    io:format("After store: ~p ~n", [MapDict3]),
+			%	    io:format("After store: ~p ~n", [MapDict3]),
 				    mainloop(UserPIDs,MapDict3);
 			       true ->
-				    io:format("Dict before battle: ~p ~n", [MapDict]),
+			%	    io:format("Dict before battle: ~p ~n", [MapDict]),
 				    io:format("Position ~p occupied! BATTLE! ~n", [{CoordinateX-1,CoordinateY}]),
 				    GunmanPID ! {newposition, {CoordinateX,CoordinateY}},
 				    mainloop(UserPIDs,MapDict)
@@ -53,7 +54,7 @@ mainloop(UserPIDs, MapDict) ->
 				    MapDict3 = dict:store({CoordinateX+1,CoordinateY}, GunmanPID, MapDict2),  
 				    mainloop(UserPIDs,MapDict3);
 			       true ->
-				    io:format("Dict before battle: ~p ~n", [MapDict]),
+			%	    io:format("Dict before battle: ~p ~n", [MapDict]),
 				    io:format("Position ~p occupied! BATTLE! ~n", [{CoordinateX+1,CoordinateY}]),
 				    GunmanPID ! {newposition, {CoordinateX,CoordinateY}},
 				    mainloop(UserPIDs,MapDict)			 
