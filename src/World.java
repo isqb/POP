@@ -6,13 +6,12 @@ import java.awt.*;
 import java.util.Hashtable;
 
 public class World extends JFrame {
-    private final int MAXCOWBOYS = 10;
+    private final int MAXCOWBOYS = 25;
     private int numberOfCowboys = 0;
-    //private Cowboy[][] cowboys = new Cowboy[2][MAXCOWBOYS];
     Hashtable cowboys = new Hashtable();
 
-    private int gridX = 15;
-    private int gridY = 15;
+    private int gridX = 25;
+    private int gridY = 25;
     private JFrame frame = new JFrame();
     private JPanel[][] grid = new JPanel[gridX][gridY];
 
@@ -39,17 +38,16 @@ public class World extends JFrame {
     }
 
     public void makeGrid() {
-	//JFrame frame = new JFrame();
 	frame.setLayout(new GridLayout(gridX, gridY));
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	frame.pack();
-	frame.setSize(800, 640);
+	frame.setSize(640, 640);
 	frame.setVisible(true);
 
 	for (int x=0; x<gridX; x++) {
             for (int y=0; y<gridY; y++) {
-		grid[x][y] = new JPanel();
-		frame.add(grid[x][y]);
+		grid[y][x] = new JPanel();
+		frame.add(grid[y][x]);
             }
 	}	
     }
