@@ -35,7 +35,7 @@ public class ErlController implements Runnable {
 
 		OtpErlangObject object;
 		OtpErlangTuple msg;
-                OtpErlangString s;
+                OtpErlangAtom atom;
 		OtpErlangPid from;
 		OtpErlangLong x;
 		OtpErlangLong y;
@@ -47,12 +47,12 @@ public class ErlController implements Runnable {
 				if(object instanceof OtpErlangTuple) {
 					msg = (OtpErlangTuple)object;
 
-                                        s = (OtpErlangString)msg.elementAt(0);
+                                        atom = (OtpErlangAtom)msg.elementAt(0);
                                         from = (OtpErlangPid)msg.elementAt(1);
                                         x = (OtpErlangLong)msg.elementAt(2);
                                         y = (OtpErlangLong)msg.elementAt(3);
 
-                                        String a = (String)s.stringValue();
+                                        String a = (String)atom.atomValue();
                                         int pid = (int)from.id();
                                         int newX = (int)x.intValue();
                                         int newY = (int)y.intValue();
