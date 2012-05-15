@@ -13,15 +13,21 @@ public class ErlController implements Runnable {
 
 	public ErlController(World world) {
                 this.world = world;
+                world.setErlController(this);
 	}
 
 	public void run() {
 		try {
 			init();
 		} catch(Exception e) {
-			System.out.println(e);
+			System.out.println("failed init: " + e);
 		}
 	}
+
+        public void move(String direction) {
+                OtpErlangAtom dir = new OtpErlangAtom(direction);
+                System.out.println(dir);
+        }
 
         public void init() throws Exception {
 		OtpNode myListeningNode = new OtpNode(nodeName);
@@ -29,6 +35,7 @@ public class ErlController implements Runnable {
 
 		OtpErlangObject object;
 		OtpErlangTuple msg;
+                OtpErlangString s;
 		OtpErlangPid from;
 		OtpErlangLong x;
 		OtpErlangLong y;
@@ -39,23 +46,33 @@ public class ErlController implements Runnable {
 
 				if(object instanceof OtpErlangTuple) {
 					msg = (OtpErlangTuple)object;
-                                        
-                                        from = (OtpErlangPid)(msg.elementAt(0));
-                                        x = (OtpErlangLong)msg.elementAt(1);
-                                        y = (OtpErlangLong)msg.elementAt(2);
 
+                                        s = (OtpErlangString)msg.elementAt(0);
+                                        from = (OtpErlangPid)msg.elementAt(1);
+                                        x = (OtpErlangLong)msg.elementAt(2);
+                                        y = (OtpErlangLong)msg.elementAt(3);
+
+                                        String a = (String)s.stringValue();
                                         int pid = (int)from.id();
                                         int newX = (int)x.intValue();
                                         int newY = (int)y.intValue();
-					//System.out.println(from.id() + ", " + x + ", " + y);
 
                                         Hashtable cowboys = world.getCowboys();
+                                        boolean isHuman;
+                                        if (a.equals("human")) {
+                                            isHuman = true;
+                                        }
+                                        else {
+                                            isHuman = false;
+                                        }
+                                        
                                         if (cowboys.containsKey(pid)) {
                                             world.move((Cowboy)cowboys.get(pid), newX, newY);
                                         }
                                         else {
-                                            world.createCowboy(pid, newX, newY);
+                                            world.createCowboy(pid, newX, newY, isHuman);
                                         }
+                                        
                                         world.paint();
 				}
 			} catch(OtpErlangExit e) {

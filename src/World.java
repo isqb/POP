@@ -1,11 +1,13 @@
+import java.awt.event.KeyEvent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.ImageIcon;
 import java.awt.*;
+import java.awt.event.KeyListener;
 import java.util.Hashtable;
 
-public class World extends JFrame {
+public class World extends JFrame implements KeyListener {
     private final int MAXCOWBOYS = 25;
     private int numberOfCowboys = 0;
     Hashtable cowboys = new Hashtable();
@@ -14,6 +16,8 @@ public class World extends JFrame {
     private int gridY = 25;
     private JFrame frame = new JFrame();
     private JPanel[][] grid = new JPanel[gridX][gridY];
+
+    private ErlController erl;
 
     public void setGridX(int x) {
 	gridX = x;
@@ -25,6 +29,10 @@ public class World extends JFrame {
 
     public Hashtable getCowboys() {
         return cowboys;
+    }
+
+    public void setErlController(ErlController erl) {
+        this.erl = erl;
     }
 
     protected static ImageIcon createImageIcon(String path) {
@@ -40,8 +48,10 @@ public class World extends JFrame {
     public void makeGrid() {
 	frame.setLayout(new GridLayout(gridX, gridY));
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	frame.pack();
 	frame.setSize(640, 640);
+        frame.addKeyListener(this);
+        frame.setFocusable(true);
+	frame.pack();
 	frame.setVisible(true);
 
 	for (int x=0; x<gridX; x++) {
@@ -61,12 +71,21 @@ public class World extends JFrame {
 	}
     }
 
-    public void createCowboy(int pid, int x, int y) {
+    public void createCowboy(int pid, int x, int y, boolean isHuman) {
     	if (numberOfCowboys == MAXCOWBOYS) {
     		System.out.println("Too many cowboys already!!");
     		return;
     	}
-    	ImageIcon image = createImageIcon("cb.jpg");
+
+        System.out.println(isHuman);
+        ImageIcon image;
+        if (isHuman) {
+            image = createImageIcon("cb.jpg");
+            System.out.println("borde ju funka...");
+        }
+        else {
+            image = createImageIcon("bg.jpg");
+        }
 
     	Cowboy cb = new Cowboy(x, y, image);
     	grid[x][y].add(new JLabel(image));
@@ -85,5 +104,22 @@ public class World extends JFrame {
     	    	
     	ImageIcon image = cowboy.getImage();
     	grid[newX][newY].add(new JLabel(image));
+    }
+
+    public void keyTyped(KeyEvent e) {
+        char c = e.getKeyChar();
+        if (c == 'w'  ||  c == 'a'  ||
+            c == 's'  ||  c == 'd') {
+            erl.move(Character.toString(c));
+        }
+    }
+
+    public void keyPressed(KeyEvent e) {
+        if (e.getID() == e.VK_UP) {
+            System.out.println(":D");
+        }
+    }
+
+    public void keyReleased(KeyEvent e) {
     }
 }
