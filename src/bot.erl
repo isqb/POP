@@ -7,7 +7,7 @@ initbot(MainPID) ->
     MainPID ! {register, self(),Coordinates},
     random:seed(now()),
     Direction = lists:nth(random:uniform(4),[["w"],["a"],["d"],["s"]]),
-    MainPID ! {walk, self(), Direction, Coordinates},
+    MainPID ! {walk, self(), Direction},
     botloop(MainPID).
 
 botloop(MainPID) ->
@@ -21,7 +21,7 @@ botloop(MainPID) ->
 	    timer:sleep(50),
 	    random:seed(now()),
 	    Direction = lists:nth(random:uniform(4),[["w"],["a"],["d"],["s"]]),
-	    MainPID ! {walk, self(), Direction, {CoordinateX,CoordinateY}},
+	    MainPID ! {walk, self(), Direction},
 	    botloop(MainPID);
 	exit ->
 	    io:format("Botloop with PID ~p exited~n",[self()])
