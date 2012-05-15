@@ -24,14 +24,12 @@ loop_test() ->
     LoopPID ! {newposition, {10,1}},
     receive
 	{walk, LoopPID, _Direction1, Coordinates1} ->
-	    io:format("First walk: ~p~n",[Coordinates1]),
-	    Result1 = Coordinates1
+	    io:format("")
     end,
     receive
 	{walk, LoopPID, _Direction2, Coordinates2} ->
-	    io:format("Second walk: ~p~n",[Coordinates2]),
 	    Result2 = Coordinates2
     end,
     exit(LoopPID,normal),
-    ?assertEqual({{10,0},{10,1}},{Result1,Result2}).
+    ?assertEqual({10,1},Result2).
 
