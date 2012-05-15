@@ -4,7 +4,7 @@ import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ErlController implements Runnable {
+public class ErlController {
 	private String nodeName = "sigui";
 	private String mBoxName = "gui";
         private OtpNode node;
@@ -28,14 +28,6 @@ public class ErlController implements Runnable {
                 }
 	}
 
-	public void run() {
-		try {
-			init();
-		} catch(Exception e) {
-			System.out.println("failed run: " + e);
-		}
-	}
-
         public void move(String direction) {
                 OtpErlangAtom dir = new OtpErlangAtom(direction);
                 OtpErlangObject[] o = new OtpErlangObject[]{new OtpErlangAtom("move"), dir};
@@ -43,7 +35,7 @@ public class ErlController implements Runnable {
                 mbox.send(playerPID, tuple);
         }
 
-        public void init() throws Exception {
+        public void run() {
 		OtpErlangObject object;
 		OtpErlangTuple msg;
                 OtpErlangAtom atom;
@@ -87,7 +79,11 @@ public class ErlController implements Runnable {
                                         
                                         world.paint();
 				}
-			} catch(OtpErlangExit e) {
+			} catch (OtpErlangRangeException ex) {
+                                Logger.getLogger(ErlController.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (OtpErlangDecodeException ex) {
+                                Logger.getLogger(ErlController.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch(OtpErlangExit e) {
 				System.out.println("error: " + e);
 			}
 		}
