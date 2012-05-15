@@ -14,7 +14,10 @@ botloop(MainPID) ->
     receive
 	{newposition, {CoordinateX,CoordinateY}} ->
 	    io:format("BOT: ~p ~n", [{CoordinateX,CoordinateY, self()}]),
-	    {gui,'sigui@fries'} ! {bot,self(),CoordinateX,CoordinateY},
+	    {ok,Host} = inet:gethostname(),
+	    HostFull = string:concat("sigui@",Host),
+	    HostAtom = list_to_atom(HostFull),
+	    {gui,HostAtom} ! {bot,self(),CoordinateX,CoordinateY},
 	    timer:sleep(50),
 	    random:seed(now()),
 	    Direction = lists:nth(random:uniform(4),[["w"],["a"],["d"],["s"]]),
