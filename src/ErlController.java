@@ -40,8 +40,6 @@ public class ErlController implements Runnable {
                 OtpErlangAtom dir = new OtpErlangAtom(direction);
                 OtpErlangObject[] o = new OtpErlangObject[]{new OtpErlangAtom("move"), dir};
                 OtpErlangTuple tuple = new OtpErlangTuple(o);
-                System.out.println(playerPID + " ! " + tuple);
-                //mbox.ping(playerPID.node(), 5000);
                 mbox.send(playerPID, tuple);
         }
 
