@@ -14,7 +14,7 @@ botloop(MainPID) ->
     receive
 	{newposition, {CoordinateX,CoordinateY}} ->
 	    io:format("BOT: ~p ~n", [{CoordinateX,CoordinateY, self()}]),
-	    {gui,'sigui@sernander'} ! {self(),CoordinateX,CoordinateY},
+	    {gui,'sigui@fries'} ! {bot,self(),CoordinateX,CoordinateY},
 	    timer:sleep(50),
 	    random:seed(now()),
 	    Direction = lists:nth(random:uniform(4),[["w"],["a"],["d"],["s"]]),
