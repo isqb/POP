@@ -12,8 +12,8 @@ public class World extends JFrame implements KeyListener {
     private int numberOfCowboys = 0;
     Hashtable cowboys = new Hashtable();
 
-    private int gridX = 25;
-    private int gridY = 25;
+    private int gridX = 28;
+    private int gridY = 28;
     private JFrame frame = new JFrame();
     private JPanel[][] grid = new JPanel[gridX][gridY];
 
@@ -48,18 +48,17 @@ public class World extends JFrame implements KeyListener {
     public void makeGrid() {
 	frame.setLayout(new GridLayout(gridX, gridY));
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	frame.setSize(640, 640);
+	frame.setSize(600, 670);
         frame.addKeyListener(this);
         frame.setFocusable(true);
-	frame.pack();
-	frame.setVisible(true);
-
 	for (int x=0; x<gridX; x++) {
             for (int y=0; y<gridY; y++) {
 		grid[y][x] = new JPanel();
+                grid[y][x].setBackground(Color.white);
 		frame.add(grid[y][x]);
             }
-	}	
+	}
+	frame.setVisible(true);
     }
 
     public void paint() {
