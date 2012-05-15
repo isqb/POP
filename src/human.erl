@@ -17,11 +17,10 @@ walk(MainPID,GunmanPID) ->
 	    %%{ok, Direction} = io:fread("...East,West,North or South?    ","~s"),
 	    {ok, Direction} = 
 	    MainPID ! {walk, GunmanPID, Direction, Newcoordinates},
-	    
 	    walk(MainPID,GunmanPID);
-	{move, 'Direction'} ->
-	    MainPID ! { walk, GunmanPID, 'Direction', Newcoordinates},
-	    walk(MainPID,GunmanPID);
+	%%{move, 'Direction'} ->
+	   %% MainPID ! { walk, GunmanPID, 'Direction', Newcoordinates},
+	    %%walk(MainPID,GunmanPID);
 	exit ->
 	    io:format("Input process with PID ~p exited~n",[self()])
     end.
