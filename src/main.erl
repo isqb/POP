@@ -3,16 +3,6 @@
 
 start()->
     Main = self(),
-    %% spawn(fun()-> bot:initbot(Main) end),
-    %% timer:sleep(400),
-    %% spawn(fun()-> bot:initbot(Main) end),
-    %% timer:sleep(400),
-    %% spawn(fun()-> bot:initbot(Main) end),
-    %% timer:sleep(400),
-    %% spawn(fun()-> bot:initbot(Main) end),
-    %% timer:sleep(400),
-    %% spawn(fun()-> bot:initbot(Main) end),
-    %% timer:sleep(400),
     spawn(fun()-> bot:initbot(Main) end),
     timer:sleep(1000),
     spawn(fun()-> human:inithumanplayer(Main) end),
@@ -83,7 +73,7 @@ mainloop(UserPIDs, MapDict) ->
 				    MapDict3 = dict:store({CoordinateX,CoordinateY+1}, GunmanPID, MapDict2),  
 				    mainloop(UserPIDs,MapDict3);
 			       true ->
-				    io:format("Dict before battle: ~p ~n", [MapDict]),
+				    %%io:format("Dict before battle: ~p ~n", [MapDict]),
 				    io:format("Position ~p occupied! BATTLE! ~n", [{CoordinateX,CoordinateY+1}]),
 				    GunmanPID ! {newposition, {CoordinateX,CoordinateY}},
 				    mainloop(UserPIDs,MapDict)			 
@@ -101,7 +91,7 @@ mainloop(UserPIDs, MapDict) ->
 				    MapDict3 = dict:store({CoordinateX,CoordinateY-1}, GunmanPID, MapDict2),  
 				    mainloop(UserPIDs,MapDict3);
 			       true ->
-				    io:format("Dict before battle: ~p ~n", [MapDict]),
+				    %%io:format("Dict before battle: ~p ~n", [MapDict]),
 				    io:format("Position ~p occupied! BATTLE! ~n", [{CoordinateX,CoordinateY-1}]),
 				    GunmanPID ! {newposition, {CoordinateX,CoordinateY}},
 				    mainloop(UserPIDs,MapDict)			 
