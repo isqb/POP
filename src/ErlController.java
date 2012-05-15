@@ -32,13 +32,17 @@ public class ErlController implements Runnable {
 		try {
 			init();
 		} catch(Exception e) {
-			System.out.println("failed init: " + e);
+			System.out.println("failed run: " + e);
 		}
 	}
 
         public void move(String direction) {
                 OtpErlangAtom dir = new OtpErlangAtom(direction);
-                mbox.send(playerPID, dir);
+                OtpErlangObject[] o = new OtpErlangObject[]{new OtpErlangAtom("move"), dir};
+                OtpErlangTuple tuple = new OtpErlangTuple(o);
+                System.out.println(playerPID + " ! " + tuple);
+                //mbox.ping(playerPID.node(), 5000);
+                mbox.send(playerPID, tuple);
         }
 
         public void init() throws Exception {

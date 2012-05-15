@@ -18,7 +18,7 @@ botloop(MainPID) ->
 	    HostFull = string:concat("sigui@",Host),
 	    HostAtom = list_to_atom(HostFull),
 	    {gui,HostAtom} ! {bot,self(),CoordinateX,CoordinateY},
-	    timer:sleep(50),
+	    timer:sleep(500),
 	    random:seed(now()),
 	    Direction = lists:nth(random:uniform(4),[["w"],["a"],["d"],["s"]]),
 	    MainPID ! {walk, self(), Direction},

@@ -77,11 +77,9 @@ public class World extends JFrame implements KeyListener {
     		return;
     	}
 
-        System.out.println(isHuman);
         ImageIcon image;
         if (isHuman) {
             image = createImageIcon("cb.jpg");
-            System.out.println("borde ju funka...");
         }
         else {
             image = createImageIcon("bg.jpg");

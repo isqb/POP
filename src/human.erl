@@ -34,15 +34,22 @@ humanloop(MainPID) ->
 	    HostAtom = list_to_atom(HostFull),
 	    {gui,HostAtom} ! {human,self(),CoordinateX,CoordinateY},
 	    humanloop(MainPID);
-	exit ->
-	    io:format("Gunmanloop with pid ~p exited~n",[self()]);
-	w -> 
+	{move,w} -> 
 	    io:format("Tryckt på W ~n"),
-    	    MainPID ! {walk, self(), "w"};
-	a -> 
-    	    MainPID ! {walk, self(), "a"};
-	s -> 
-    	    MainPID ! {walk, self(), "s"};
-	d -> 
-    	    MainPID ! {walk, self(), "d"}
+    	    MainPID ! {walk, self(), ["w"]},
+	    humanloop(MainPID);
+	{move,a} -> 
+	    io:format("Tryckt på A ~n"),
+    	    MainPID ! {walk, self(), ["a"]},
+	    humanloop(MainPID);
+	{move,s} -> 
+	    io:format("Tryckt på S ~n"),
+    	    MainPID ! {walk, self(), ["s"]},
+	    humanloop(MainPID);
+	{move,d} -> 
+	    io:format("Tryckt på D ~n"),
+    	    MainPID ! {walk, self(), ["d"]},
+	    humanloop(MainPID);
+	exit ->
+	    io:format("Gunmanloop with pid ~p exited~n",[self()])
     end.
