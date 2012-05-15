@@ -1,9 +1,15 @@
 import com.ericsson.otp.erlang.*;
+import java.io.IOException;
 import java.util.Hashtable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ErlController implements Runnable {
 	private String nodeName = "sigui";
 	private String mBoxName = "gui";
+        private OtpNode node;
+        private OtpMbox mbox;
+        private OtpErlangPid playerPID = null;
         private World world;
 
 	//Constuctor
@@ -14,6 +20,12 @@ public class ErlController implements Runnable {
 	public ErlController(World world) {
                 this.world = world;
                 world.setErlController(this);
+                try {
+                    node = new OtpNode(nodeName);
+                    mbox = node.createMbox(mBoxName);
+                } catch (IOException ex) {
+                    Logger.getLogger(ErlController.class.getName()).log(Level.SEVERE, null, ex);
+                }
 	}
 
 	public void run() {
@@ -26,13 +38,10 @@ public class ErlController implements Runnable {
 
         public void move(String direction) {
                 OtpErlangAtom dir = new OtpErlangAtom(direction);
-                System.out.println(dir);
+                mbox.send(playerPID, dir);
         }
 
         public void init() throws Exception {
-		OtpNode myListeningNode = new OtpNode(nodeName);
-		OtpMbox myListeningMbox = myListeningNode.createMbox(mBoxName);
-
 		OtpErlangObject object;
 		OtpErlangTuple msg;
                 OtpErlangAtom atom;
@@ -42,7 +51,7 @@ public class ErlController implements Runnable {
 
 		while (true) {
 			try {
-				object = myListeningMbox.receive();
+				object = mbox.receive();
 
 				if(object instanceof OtpErlangTuple) {
 					msg = (OtpErlangTuple)object;
@@ -61,6 +70,7 @@ public class ErlController implements Runnable {
                                         boolean isHuman;
                                         if (a.equals("human")) {
                                             isHuman = true;
+                                            playerPID = from;
                                         }
                                         else {
                                             isHuman = false;
