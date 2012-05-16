@@ -3,7 +3,7 @@
 
 inithumanplayer(MainPID) ->
     random:seed(now()),
-    {CoordinateX,CoordinateY} = {random:uniform(24),random:uniform(24)},
+    {CoordinateX,CoordinateY} = {random:uniform(536),random:uniform(897)},
     MainPID ! {register, self(), {CoordinateX,CoordinateY}},
     %% InputPID = spawn(fun() -> walk(MainPID,GunmanPID) end), 
     %% InputPID ! {walk, Coordinates},

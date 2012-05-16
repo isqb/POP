@@ -39,7 +39,7 @@ mainloop(UserPIDs, MapDict) ->
 			    end
 		    end;
 		["d"] ->
-		    if CoordinateX>23 ->
+		    if CoordinateX>536 ->
 			    GunmanPID ! {newposition, {CoordinateX,CoordinateY}},
 			    mainloop(UserPIDs, MapDict);
 		       true ->
@@ -57,7 +57,7 @@ mainloop(UserPIDs, MapDict) ->
 			    end
 		    end;
 		["s"] ->
-		    if CoordinateY>23 ->
+		    if CoordinateY>897 ->
 			    GunmanPID ! {newposition, {CoordinateX,CoordinateY}},
 			    mainloop(UserPIDs, MapDict);
 		       true ->
