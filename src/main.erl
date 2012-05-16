@@ -33,6 +33,8 @@ mainloop(UserPIDs, MapDict) ->
 			       true ->
 				    io:format("Position ~p occupied! BATTLE! ~n", [{CoordinateX-1,CoordinateY}]),
 				    GunmanPID ! {newposition, {CoordinateX,CoordinateY}},
+				    EnemyPID = dict:fectch({CoordinateX-1,CoordinateY},MapDict),
+				    %%do_battle(GunmanPID, EnemyPID),
 				    mainloop(UserPIDs,MapDict)
 			    end
 		    end;
@@ -47,8 +49,9 @@ mainloop(UserPIDs, MapDict) ->
 				    MapDict2 = dict:erase({CoordinateX,CoordinateY}, MapDict),
 				    MapDict3 = dict:store({CoordinateX+1,CoordinateY}, GunmanPID, MapDict2),  
 				    mainloop(UserPIDs,MapDict3);
-			       true ->
+			       true -> %% Else BATTLE
 				    io:format("Position ~p occupied! BATTLE! ~n", [{CoordinateX+1,CoordinateY}]),
+				    
 				    GunmanPID ! {newposition, {CoordinateX,CoordinateY}},
 				    mainloop(UserPIDs,MapDict)			 
 			    end
@@ -87,7 +90,7 @@ mainloop(UserPIDs, MapDict) ->
 				    mainloop(UserPIDs,MapDict)			 
 			    end
 		    end;
-		["Quit"] ->
+		exit ->
 		    exitall(UserPIDs);
 		["quit"] ->
 		    exitall(UserPIDs);
@@ -119,15 +122,11 @@ getCoordinates(GunmanPID, [Head|Tail], MapDict) ->
 getCoordinates2(GunmanPID, MapDict) ->
     KeyList = dict:fetch_keys(MapDict),
     getCoordinates(GunmanPID, KeyList, MapDict).
-    
-
-    
-
-    
 
 exitall([]) ->
     timer:sleep(1000),
-    io:format("All processes exited, now exiting main with pid ~p... Goodbye ~n",[self()]);
+    io:format("All processes exited, now exiting main with pid ~p... Goodbye ~n",[self()]),
+    halt();
 exitall([PID | Rest]) ->
     PID ! exit,
     exitall(Rest).
