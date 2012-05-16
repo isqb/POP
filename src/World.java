@@ -1,22 +1,22 @@
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.ImageIcon;
 import java.awt.*;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowListener;
 import java.util.Hashtable;
 
-public class World extends JFrame implements KeyListener {
-    private final int MAXCOWBOYS = 25;
-    private int numberOfCowboys = 0;
-    Hashtable cowboys = new Hashtable();
-
+public class World extends JFrame implements KeyListener, WindowListener {
     private int gridX = 25;
     private int gridY = 25;
     private JFrame frame = new JFrame();
     private JPanel[][] grid = new JPanel[gridX][gridY];
-
+    private final int MAXCOWBOYS = 25;
+    private int numberOfCowboys = 0;
+    private Hashtable cowboys = new Hashtable();
     private ErlController erl;
 
     public void setGridX(int x) {
@@ -54,14 +54,13 @@ public class World extends JFrame implements KeyListener {
 	for (int x=0; x<gridX; x++) {
             for (int y=0; y<gridY; y++) {
 		grid[y][x] = new JPanel();
-                grid[y][x].setBackground(Color.white);
 		frame.add(grid[y][x]);
             }
 	}
 	frame.setVisible(true);
     }
 
-    public void paint() {
+    public void repaint() {
         frame.repaint();
 	for (int x=0; x<gridX; x++) {
             for (int y=0; y<gridY; y++) {
@@ -118,5 +117,33 @@ public class World extends JFrame implements KeyListener {
     }
 
     public void keyReleased(KeyEvent e) {
+    }
+
+    public void windowOpened(WindowEvent e) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void windowClosing(WindowEvent e) {
+        erl.exit();
+    }
+
+    public void windowClosed(WindowEvent e) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void windowIconified(WindowEvent e) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void windowDeiconified(WindowEvent e) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void windowActivated(WindowEvent e) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void windowDeactivated(WindowEvent e) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
