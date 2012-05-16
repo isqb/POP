@@ -50,6 +50,7 @@ public class World extends JFrame implements KeyListener, WindowListener {
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	frame.setSize(560, 930);
         frame.addKeyListener(this);
+        frame.addWindowListener(this);
         frame.setFocusable(true);
 	for (int x=0; x<gridX; x++) {
             for (int y=0; y<gridY; y++) {
@@ -111,8 +112,20 @@ public class World extends JFrame implements KeyListener, WindowListener {
     }
 
     public void keyPressed(KeyEvent e) {
-        if (e.getID() == e.VK_UP) {
-            System.out.println(":D");
+        int keyCode = e.getKeyCode();
+        switch (keyCode) {
+            case KeyEvent.VK_UP:
+                erl.move("up");
+                break;
+            case KeyEvent.VK_DOWN:
+                erl.move("down");
+                break;
+            case KeyEvent.VK_LEFT:
+                erl.move("left");
+                break;
+            case KeyEvent.VK_RIGHT:
+                erl.move("right");
+                break;
         }
     }
 
@@ -120,30 +133,26 @@ public class World extends JFrame implements KeyListener, WindowListener {
     }
 
     public void windowOpened(WindowEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        System.out.println("Open that shit up!");
     }
 
     public void windowClosing(WindowEvent e) {
+        System.out.println("closing...");
         erl.close();
     }
 
     public void windowClosed(WindowEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public void windowIconified(WindowEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public void windowDeiconified(WindowEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public void windowActivated(WindowEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public void windowDeactivated(WindowEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
