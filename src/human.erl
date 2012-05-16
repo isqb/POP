@@ -35,21 +35,19 @@ humanloop(MainPID) ->
 	    {gui,HostAtom} ! {human,self(),CoordinateX,CoordinateY},
 	    humanloop(MainPID);
 	{move,w} -> 
-	    io:format("Tryckt på W ~n"),
     	    MainPID ! {walk, self(), ["w"]},
 	    humanloop(MainPID);
 	{move,a} -> 
-	    io:format("Tryckt på A ~n"),
     	    MainPID ! {walk, self(), ["a"]},
 	    humanloop(MainPID);
 	{move,s} -> 
-	    io:format("Tryckt på S ~n"),
     	    MainPID ! {walk, self(), ["s"]},
 	    humanloop(MainPID);
 	{move,d} -> 
-	    io:format("Tryckt på D ~n"),
     	    MainPID ! {walk, self(), ["d"]},
 	    humanloop(MainPID);
 	exit ->
-	    io:format("Gunmanloop with pid ~p exited~n",[self()])
+	    io:format("Gunmanloop with pid ~p exited~n",[self()]);
+	close ->
+	    MainPID ! {walk, self(), exit}
     end.
