@@ -23,13 +23,13 @@ loop_test() ->
     LoopPID = spawn(fun() -> bot:initbot(Main) end), %%Spawn a botloop process for testing
     LoopPID ! {newposition, {10,1}},
     receive
-	{walk, LoopPID, _Direction1, Coordinates1} ->
-	    io:format("")
+	{walk, LoopPID, _Direction1} ->
+	    Result1 = initiated
     end,
     receive
-	{walk, LoopPID, _Direction2, Coordinates2} ->
-	    Result2 = Coordinates2
+	{walk, LoopPID, _Direction2} ->
+	    Result2 = moved
     end,
     exit(LoopPID,normal),
-    ?assertEqual({10,1},Result2).
+    ?assertEqual({initiated,moved},{Result1,Result2}).
 
