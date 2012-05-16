@@ -35,6 +35,11 @@ public class ErlController {
                 mbox.send(playerPID, tuple);
         }
 
+        public void close() {
+                OtpErlangAtom close = new OtpErlangAtom("close");
+                mbox.send(playerPID, close);
+        }
+
         public void run() {
 		OtpErlangObject object;
 		OtpErlangTuple msg;
@@ -77,7 +82,7 @@ public class ErlController {
                                             world.createCowboy(pid, newX, newY, isHuman);
                                         }
                                         
-                                        world.paint();
+                                        world.repaint();
 				}
 			} catch (OtpErlangRangeException ex) {
                                 Logger.getLogger(ErlController.class.getName()).log(Level.SEVERE, null, ex);
