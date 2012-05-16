@@ -35,9 +35,9 @@ public class ErlController {
                 mbox.send(playerPID, tuple);
         }
 
-        public void exit() {
-                OtpErlangAtom exit = new OtpErlangAtom("exit");
-                mbox.send(playerPID, exit);
+        public void close() {
+                OtpErlangAtom close = new OtpErlangAtom("close");
+                mbox.send(playerPID, close);
         }
 
         public void run() {

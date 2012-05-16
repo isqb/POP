@@ -124,7 +124,7 @@ public class World extends JFrame implements KeyListener, WindowListener {
     }
 
     public void windowClosing(WindowEvent e) {
-        erl.exit();
+        erl.close();
     }
 
     public void windowClosed(WindowEvent e) {
