@@ -33,16 +33,12 @@ public class ErlController {
                 mbox.send(playerPID, tuple);
         }
 
-        public void close() {
-                OtpErlangAtom close = new OtpErlangAtom("close");
-                mbox.send(playerPID, close);
-        }
-
         public void run() {
 		OtpErlangObject object;
 		OtpErlangTuple msg;
                 OtpErlangAtom atom;
-		OtpErlangPid from;
+		OtpErlangPid from1;
+                OtpErlangPid from2;
 		OtpErlangLong x;
 		OtpErlangLong y;
                 //OtpErlangAtom state;
@@ -55,41 +51,49 @@ public class ErlController {
 					msg = (OtpErlangTuple)object;
 
                                         atom = (OtpErlangAtom)msg.elementAt(0);
-                                        from = (OtpErlangPid)msg.elementAt(1);
-                                        x = (OtpErlangLong)msg.elementAt(2);
-                                        y = (OtpErlangLong)msg.elementAt(3);
+                                        from1 = (OtpErlangPid)msg.elementAt(1);
+                                        from2 = (OtpErlangPid)msg.elementAt(2);
+                                        x = (OtpErlangLong)msg.elementAt(3);
+                                        y = (OtpErlangLong)msg.elementAt(4);
                                         //state = (OtpErlangAtom)msg.elementAt(4);
 
                                         String a = (String)atom.atomValue();
-                                        int pid = (int)from.id();
+                                        int pid1 = (int)from1.id();
+                                        int pid2 = (int)from2.id();
                                         int newX = ((int)x.intValue())*(560/100);
                                         int newY = ((int)y.intValue())*(560/100);
                                         //String s = (String)state.atomValue();
 
                                         Hashtable cowboys = world.getCowboys();
                                         boolean isHuman;
-                                        if (a.equals("human")) {
-                                            isHuman = true;
-                                            playerPID = from;
+                                        if(a.equals("battle"))
+                                        {
+                                            Cowboy cb1 = new Cowboy() ;// test
+                                            Cowboy cb2= new Cowboy();// test
+                                            cb1 = (Cowboy)cowboys.get(pid1);
+                                            cb1 = (Cowboy)cowboys.get(pid1);
+                                            world.startBattle(cb1,cb2);
+                                            
                                         }
+                                        if (a.equals("human")) 
+                                            {
+                                                isHuman = true;
+                                                playerPID = from1;
+                                            }
                                         else {
                                             isHuman = false;
                                         }
                                         
-                                        if (cowboys.containsKey(pid)) {
-                                            world.move((Cowboy)cowboys.get(pid), newX, newY);
+                                        if (cowboys.containsKey(pid1)) {
+                                            world.move((Cowboy)cowboys.get(pid1), newX, newY);
                                             
                                         }
                                         else {
                                             
-                                            world.createCowboy(pid, newX, newY, isHuman);
+                                            world.createCowboy(pid1, newX, newY, isHuman);
                                         }
                                         
-<<<<<<< HEAD
                                         
-=======
-                                        world.repaint();
->>>>>>> 66ceabb11f6d166e13fd4ecd4136ff3562686305
 				}
 			} catch (OtpErlangRangeException ex) {
                                 Logger.getLogger(ErlController.class.getName()).log(Level.SEVERE, null, ex);

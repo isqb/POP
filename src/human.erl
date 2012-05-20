@@ -1,17 +1,14 @@
 -module(human).
--export([inithumanplayer/1]).
+-export([inithumanplayer/2]).
 
-inithumanplayer(MainPID) ->
+inithumanplayer(MainPID, GUIPID) ->
     random:seed(now()),
-    {CoordinateX,CoordinateY} = {random:uniform(536),random:uniform(897)},
+    {CoordinateX,CoordinateY} = {random:uniform(99),random:uniform(99)},
     MainPID ! {register, self(), {CoordinateX,CoordinateY}},
     %% InputPID = spawn(fun() -> walk(MainPID,GunmanPID) end), 
     %% InputPID ! {walk, Coordinates},
-    {ok,Host} = inet:gethostname(),
-    HostFull = string:concat("sigui@",Host),
-    HostAtom = list_to_atom(HostFull),
-    {gui,HostAtom} ! {human,self(),CoordinateX,CoordinateY},
-    humanloop(MainPID).
+    GUIPID ! {human,self(),self(),CoordinateX,CoordinateY},
+    humanloop(MainPID, GUIPID).
 
 %% walk(MainPID,GunmanPID) ->
 %%     receive
@@ -24,28 +21,30 @@ inithumanplayer(MainPID) ->
 %% 	    io:format("Input process with PID ~p exited~n",[self()])
 %%     end.
 
-humanloop(MainPID) ->
+humanloop(MainPID, GUIPID) ->
     receive
 	{newposition, {CoordinateX,CoordinateY}} ->
 	    Node = node(),
 	    io:format("Node: ~p ~n",[Node]),
-	    {ok,Host} = inet:gethostname(),
-	    HostFull = string:concat("sigui@",Host),
-	    HostAtom = list_to_atom(HostFull),
-	    {gui,HostAtom} ! {human,self(),CoordinateX,CoordinateY},
-	    humanloop(MainPID);
+	    GUIPID ! {human,self(),CoordinateX,CoordinateY},
+	    humanloop(MainPID, GUIPID);
 	{move,w} -> 
     	    MainPID ! {walk, self(), ["w"]},
-	    humanloop(MainPID);
+	    humanloop(MainPID, GUIPID);
 	{move,a} -> 
     	    MainPID ! {walk, self(), ["a"]},
-	    humanloop(MainPID);
+	    humanloop(MainPID, GUIPID);
 	{move,s} -> 
     	    MainPID ! {walk, self(), ["s"]},
-	    humanloop(MainPID);
+	    humanloop(MainPID, GUIPID);
 	{move,d} -> 
     	    MainPID ! {walk, self(), ["d"]},
-	    humanloop(MainPID);
+	    humanloop(MainPID, GUIPID);
+	freeze ->
+	    receive
+		unfreeze ->
+		    io:format("I'm unfrozen!")
+	    end;
 	exit ->
 	    io:format("Gunmanloop with pid ~p exited~n",[self()]);
 	close ->

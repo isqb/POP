@@ -5,30 +5,43 @@ public class Cowboy {
     int x;
     int y;
     ImageIcon image;
-    String state;
+    //String state;
     
     
     //måste ses över 
     public Cowboy() {
         this.x = x;
         this.y = y;
-        this.image = image;
-        this.state = state;
+        this.image = createImageIcon("cowboyLeft.png");
+        
+        
     }
     
     
-    public Cowboy(int x, int y, ImageIcon image, String state) {
+    public Cowboy(int x, int y, ImageIcon image) {
         this.x = x;
         this.y = y;
         this.image = image;
-        this.state = state;
+        
     }
 
    
-    public void setState(String state)
+    protected static ImageIcon createImageIcon(String path) 
+        {
+            java.net.URL imgURL = World.class.getResource(path);
+            if (imgURL != null) {
+                return new ImageIcon(imgURL);
+            } else {
+                System.err.println("Couldn't find file: " + path);
+                return null;
+            }
+        }
+    
+    
+    /*public void setState(String state)
     {
         this.state = state;
-    }
+    }*/
 
     public void setX(int x)
     {
@@ -54,11 +67,12 @@ public class Cowboy {
     {
     	return y;
     }
-     
+    
+    /*
     public String getState()
     {
         return state;
-    }
+    }*/
 
     public Image getImage()
     {
@@ -66,10 +80,12 @@ public class Cowboy {
     	return image.getImage();
     }
     
-
+    
+    
+    
     @Override
     public String toString()
     {
-    	return "x: " + x + ", y: " + y + "state: " + state ;
+    	return "x: " + x + ", y: " + y;
     }
 }

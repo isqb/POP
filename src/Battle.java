@@ -73,7 +73,10 @@ public class Battle extends JPanel implements ActionListener{
             }
         }
     
-    
+    public void fight()
+    {
+        
+    }
     
     
     @Override

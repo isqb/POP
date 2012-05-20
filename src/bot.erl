@@ -1,28 +1,31 @@
 -module(bot).
--export([initbot/1, botloop/1]).
+-export([initbot/2, botloop/2]).
 
-initbot(MainPID) ->
+initbot(MainPID, GUIPID) ->
     random:seed(now()),
-    Coordinates = {random:uniform(536),random:uniform(897)},
+    Coordinates = {random:uniform(99),random:uniform(99)},
     MainPID ! {register, self(),Coordinates},
     random:seed(now()),
     Direction = lists:nth(random:uniform(4),[["w"],["a"],["d"],["s"]]),
     MainPID ! {walk, self(), Direction},
-    botloop(MainPID).
+    botloop(MainPID, GUIPID).
 
-botloop(MainPID) ->
+botloop(MainPID, GUIPID) ->
     receive
 	{newposition, {CoordinateX,CoordinateY}} ->
 	    io:format("BOT: ~p ~n", [{CoordinateX,CoordinateY, self()}]),
-	    {ok,Host} = inet:gethostname(),
-	    HostFull = string:concat("sigui@",Host),
-	    HostAtom = list_to_atom(HostFull),
-	    {gui,HostAtom} ! {bot,self(),CoordinateX,CoordinateY},
+	    GUIPID ! {bot,self(),self(),CoordinateX,CoordinateY},
 	    timer:sleep(500),
 	    random:seed(now()),
 	    Direction = lists:nth(random:uniform(4),[["w"],["a"],["d"],["s"]]),
 	    MainPID ! {walk, self(), Direction},
-	    botloop(MainPID);
+	    botloop(MainPID, GUIPID);
+	freeze ->
+	    receive
+		unfreeze ->
+		    io:format("I'm unfrozen!")
+	    end,
+	    botloop(MainPID, GUIPID);
 	exit ->
 	    io:format("Botloop with PID ~p exited~n",[self()])
     end.
