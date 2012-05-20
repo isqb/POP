@@ -1,31 +1,30 @@
 import java.awt.event.KeyEvent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.ImageIcon;
 import java.awt.*;
 import java.awt.event.KeyListener;
 import java.util.Hashtable;
+import javax.swing.*;
 
-public class World extends JFrame implements KeyListener {
+public class World extends JPanel implements KeyListener {
+    
     private final int MAXCOWBOYS = 25;
     private int numberOfCowboys = 0;
     Hashtable cowboys = new Hashtable();
-
-    private int gridX = 25;
-    private int gridY = 25;
-    private JFrame frame = new JFrame();
-    private JPanel[][] grid = new JPanel[gridX][gridY];
-
+    Cowboy[] cowboylist = new Cowboy[MAXCOWBOYS];
+    
+   
+    public World()
+    {
+      this.setBackground(Color.BLACK);
+      this.setFocusable(true);
+      this.setDoubleBuffered(true);
+      this.add(new JLabel(createImageIcon("background.png")));
+      this.addKeyListener(this);
+    }
+    
+    
     private ErlController erl;
 
-    public void setGridX(int x) {
-	gridX = x;
-    }
-
-    public void setGridY(int y) {
-	gridY = y;
-    }
+   
 
     public Hashtable getCowboys() {
         return cowboys;
@@ -35,39 +34,20 @@ public class World extends JFrame implements KeyListener {
         this.erl = erl;
     }
 
-    protected static ImageIcon createImageIcon(String path) {
-        java.net.URL imgURL = World.class.getResource(path);
-        if (imgURL != null) {
-            return new ImageIcon(imgURL);
-        } else {
-            System.err.println("Couldn't find file: " + path);
-            return null;
+    
+
+    @Override
+    public void paint(Graphics g) 
+    {
+        super.paint(g);
+        Graphics2D g2d = (Graphics2D) g;
+        for(int i = 0; i < numberOfCowboys; i++){
+            Cowboy cb = cowboylist[i];
+            g2d.drawImage(cb.getImage(), cb.getX(), cb.getY(), this);
         }
-    }
-
-    public void makeGrid() {
-	frame.setLayout(new GridLayout(gridX, gridY));
-	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	frame.setSize(560, 930);
-        frame.addKeyListener(this);
-        frame.setFocusable(true);
-	for (int x=0; x<gridX; x++) {
-            for (int y=0; y<gridY; y++) {
-		grid[y][x] = new JPanel();
-                grid[y][x].setBackground(Color.white);
-		frame.add(grid[y][x]);
-            }
-	}
-	frame.setVisible(true);
-    }
-
-    public void paint() {
-        frame.repaint();
-	for (int x=0; x<gridX; x++) {
-            for (int y=0; y<gridY; y++) {
-		grid[x][y].revalidate();
-            }
-	}
+        Toolkit.getDefaultToolkit().sync();
+        g.dispose();
+        
     }
 
     public void createCowboy(int pid, int x, int y, boolean isHuman) {
@@ -78,45 +58,99 @@ public class World extends JFrame implements KeyListener {
 
         ImageIcon image;
         if (isHuman) {
-            image = createImageIcon("cowboy.png");
+            image = createImageIcon("cowboyDown.png");
         }
         else {
-            image = createImageIcon("bg.jpg");
+            image = createImageIcon("skeleton.png");
         }
 
-    	Cowboy cb = new Cowboy(x, y, image);
-    	grid[x][y].add(new JLabel(image));
+    	cowboylist[numberOfCowboys] = new Cowboy(x, y, image,"standing");
 
-        cowboys.put(pid, cb);
+        cowboys.put(pid, cowboylist[numberOfCowboys]);
     	numberOfCowboys++;
+        this.repaint();
     }
-
-    public void move(Cowboy cowboy, int newX, int newY) {
-    	int x = cowboy.getX();
-    	int y = cowboy.getY();
-    	grid[x][y].removeAll();
+    
+    public void move(Cowboy cowboy, int newX, int newY) 
+    {
+    	// movement images
+        /*
+        if (state.equals("moveUpp"))
+        {
+            cowboy.setImage(createImageIcon("cowboyUpp.png"));
+            cowboy.setY(newY);
+        }else if (state.equals("moveDown"))
+        {
+            cowboy.setImage(createImageIcon("cowboyDown.png"));
+            cowboy.setY(newY);
+        }else if (state.equals("moveLeft"))
+        {
+            cowboy.setImage(createImageIcon("cowboyLeft.png"));
+            cowboy.setX(newX);
+        }else if (state.equals("moveRight"))
+        {
+            cowboy.setImage(createImageIcon("cowboyRight.png"));
+            cowboy.setX(newX);
+        }
+    	*/
+    	cowboy.setY(newY);
+        cowboy.setX(newX);
+        
+    	this.repaint();    	
+    	//Image image = cowboy.getImage();
     	
-    	cowboy.setX(newX);
-    	cowboy.setY(newY); 
-    	    	
-    	ImageIcon image = cowboy.getImage();
-    	grid[newX][newY].add(new JLabel(image));
     }
 
+    public void startBattle(Cowboy cb1,Cowboy cb2)
+    {
+        Battle battle = new Battle(cb1,cb2);
+        JFrame battleFrame = new JFrame();
+        battleFrame.setAlwaysOnTop(true);
+        battleFrame.add(battle);
+        battleFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        battle.addKeyListener(this);// 'this' orsakar att vi använder World keyListener
+        battleFrame.setSize(1024, 320);
+        battleFrame.setResizable(true);
+        battleFrame.setVisible(true);
+    }
+        
+    @Override
     public void keyTyped(KeyEvent e) {
         char c = e.getKeyChar();
-        if (c == 'w'  ||  c == 'a'  ||
+        
+        if (c== 'o')
+        {
+            Cowboy cb1 = new Cowboy(499,250,createImageIcon("cowboyLeft.png"), "standing");
+            Cowboy cb2 = new Cowboy(501,250,createImageIcon("cowboyRight.png"), "standing");
+            this.startBattle(cb1,cb2);
+        }
+        else if (c == 'w'  ||  c == 'a'  ||
             c == 's'  ||  c == 'd') {
+
             erl.move(Character.toString(c));
         }
     }
 
+    @Override
     public void keyPressed(KeyEvent e) {
         if (e.getID() == e.VK_UP) {
             System.out.println(":D");
         }
     }
 
+    @Override
     public void keyReleased(KeyEvent e) {
     }
+    
+    protected static ImageIcon createImageIcon(String path) {
+        java.net.URL imgURL = World.class.getResource(path);
+        if (imgURL != null) {
+            return new ImageIcon(imgURL);
+        } else {
+            System.err.println("Couldn't find file: " + path);
+            return null;
+        }
+    }
+    
+    
 }

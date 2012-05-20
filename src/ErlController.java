@@ -5,27 +5,25 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ErlController {
-	private String nodeName = "sigui";
-	private String mBoxName = "gui";
-        private OtpNode node;
-        private OtpMbox mbox;
-        private OtpErlangPid playerPID = null;
-        private World world;
+    private String nodeName = "sigui";
+    private String mBoxName = "gui";
+    private OtpNode node;
+    private OtpMbox mbox;
+    private OtpErlangPid playerPID = null;
+    private World world;
 
 	//Constuctor
-	public ErlController() {
+    public ErlController() {}
 
-	}
-
-	public ErlController(World world) {
-                this.world = world;
-                world.setErlController(this);
-                try {
-                    node = new OtpNode(nodeName);
-                    mbox = node.createMbox(mBoxName);
-                } catch (IOException ex) {
-                    Logger.getLogger(ErlController.class.getName()).log(Level.SEVERE, null, ex);
-                }
+    public ErlController(World world) {
+        this.world = world;
+        world.setErlController(this);
+        try {
+            node = new OtpNode(nodeName);
+            mbox = node.createMbox(mBoxName);
+        } catch (IOException ex) {
+            Logger.getLogger(ErlController.class.getName()).log(Level.SEVERE, null, ex);
+        }
 	}
 
         public void move(String direction) {
@@ -42,6 +40,7 @@ public class ErlController {
 		OtpErlangPid from;
 		OtpErlangLong x;
 		OtpErlangLong y;
+                //OtpErlangAtom state;
 
 		while (true) {
 			try {
@@ -54,11 +53,13 @@ public class ErlController {
                                         from = (OtpErlangPid)msg.elementAt(1);
                                         x = (OtpErlangLong)msg.elementAt(2);
                                         y = (OtpErlangLong)msg.elementAt(3);
+                                        //state = (OtpErlangAtom)msg.elementAt(4);
 
                                         String a = (String)atom.atomValue();
                                         int pid = (int)from.id();
-                                        int newX = (int)x.intValue();
-                                        int newY = (int)y.intValue();
+                                        int newX = ((int)x.intValue())*(560/100);
+                                        int newY = ((int)y.intValue())*(560/100);
+                                        //String s = (String)state.atomValue();
 
                                         Hashtable cowboys = world.getCowboys();
                                         boolean isHuman;
@@ -72,12 +73,14 @@ public class ErlController {
                                         
                                         if (cowboys.containsKey(pid)) {
                                             world.move((Cowboy)cowboys.get(pid), newX, newY);
+                                            
                                         }
                                         else {
+                                            
                                             world.createCowboy(pid, newX, newY, isHuman);
                                         }
                                         
-                                        world.paint();
+                                        
 				}
 			} catch (OtpErlangRangeException ex) {
                                 Logger.getLogger(ErlController.class.getName()).log(Level.SEVERE, null, ex);
