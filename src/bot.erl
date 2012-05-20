@@ -3,7 +3,7 @@
 
 initbot(MainPID) ->
     random:seed(now()),
-    Coordinates = {random:uniform(24),random:uniform(24)},
+    Coordinates = {random:uniform(536),random:uniform(897)},
     MainPID ! {register, self(),Coordinates},
     random:seed(now()),
     Direction = lists:nth(random:uniform(4),[["w"],["a"],["d"],["s"]]),

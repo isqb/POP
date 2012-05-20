@@ -37,8 +37,9 @@ walk(MainPID,GunmanPID) ->
     receive
 	{walk, Newcoordinates} ->
 	    io:format("~p~n",[{"You are now at: ", self(), Newcoordinates}]),
-	    {ok, Binary} = file:read_file("/home/olbj3883/Desktop/pop_2012_project_group_01/src/human_test_cord.txt"),
-	    Direction = string:tokens(erlang:binary_to_list(Binary), "\n"),
+	    {ok, Device} = file:open("human_test_cord.txt", [read]),
+	    Move = io:get_line(Device, ""),
+	    Direction = string:tokens(Move,"\n"),
 	    io:format("Cords: ~p ~n" , [Direction]),
 	    MainPID ! {walk, GunmanPID, Direction, Newcoordinates},
 	    walk(MainPID,GunmanPID);
