@@ -7,7 +7,7 @@ inithumanplayer(MainPID, GUIPID) ->
     MainPID ! {register, self(), {CoordinateX,CoordinateY}},
     %% InputPID = spawn(fun() -> walk(MainPID,GunmanPID) end), 
     %% InputPID ! {walk, Coordinates},
-    GUIPID ! {human,self(),self(),CoordinateX,CoordinateY},
+    GUIPID ! {move,human,self(),self(),CoordinateX,CoordinateY},
     humanloop(MainPID, GUIPID).
 
 %% walk(MainPID,GunmanPID) ->
@@ -26,19 +26,19 @@ humanloop(MainPID, GUIPID) ->
 	{newposition, {CoordinateX,CoordinateY}} ->
 	    Node = node(),
 	    io:format("Node: ~p ~n",[Node]),
-	    GUIPID ! {human,self(),CoordinateX,CoordinateY},
+	    GUIPID ! {move,human,self(),self(),CoordinateX,CoordinateY},
 	    humanloop(MainPID, GUIPID);
 	{move,w} -> 
-    	    MainPID ! {walk, self(), ["w"]},
+    	MainPID ! {walk, self(), ["w"]},
 	    humanloop(MainPID, GUIPID);
 	{move,a} -> 
-    	    MainPID ! {walk, self(), ["a"]},
+    	MainPID ! {walk, self(), ["a"]},
 	    humanloop(MainPID, GUIPID);
 	{move,s} -> 
-    	    MainPID ! {walk, self(), ["s"]},
+    	MainPID ! {walk, self(), ["s"]},
 	    humanloop(MainPID, GUIPID);
 	{move,d} -> 
-    	    MainPID ! {walk, self(), ["d"]},
+    	MainPID ! {walk, self(), ["d"]},
 	    humanloop(MainPID, GUIPID);
 	freeze ->
 	    receive

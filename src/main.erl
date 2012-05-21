@@ -138,7 +138,7 @@ battle(GunmanPID,OpponentPID,GUIPID) ->
     io:format("FREEZING OPPONENT"),
     OpponentPID ! freeze,
     io:format("OPPONENT FROZEN!"),
-    GUIPID ! {battle,GunmanPID,OpponentPID,1337,42}, %% HÄR SKICKAS BATTLETUPELN TILL JAVA
+    GUIPID ! {battle,bot,GunmanPID,OpponentPID,1337,42}, %% HÄR SKICKAS BATTLETUPELN TILL JAVA
     io:format("Occupied by ~p! BATTLE! ~n", [OpponentPID]).
 
 exitall([]) ->

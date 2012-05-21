@@ -27,17 +27,19 @@ public class Battle extends JPanel implements ActionListener {
     private float walkCounter = 0f;
     private static final float fadeSpeed = 0.1f; // how quik you want to fade
     private static final float walkSpeed = 0.1f; // how quik you want to characters to walk
-    Cowboy cowboy1 = new Cowboy();
-    Cowboy cowboy2 = new Cowboy();
+    Cowboy cowboy1;
+    Cowboy cowboy2;
     private Random generator = new Random();
     private ErlController erl;
     private boolean fight;
-    private OtpErlangPid playerPID;
-    private OtpErlangPid killPID;
+    private OtpErlangPid cowboy1PID;
+    private OtpErlangPid cowboy2PID;
     boolean shoot;
 
     public Battle() {
-
+        
+        cowboy1 = new Cowboy(499,250,createImageIcon("cowboyLeft.png"));
+        cowboy2 = new Cowboy(501,250,createImageIcon("cowboyRight.png"));
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
         this.setDoubleBuffered(true);
@@ -49,8 +51,8 @@ public class Battle extends JPanel implements ActionListener {
     }
 
     public Battle(Cowboy cb1, OtpErlangPid cowboy1, Cowboy cb2, OtpErlangPid cowboy2) {
-        this.playerPID = cowboy1;
-        this.killPID = cowboy2;
+        this.cowboy1PID = cowboy1;
+        this.cowboy2PID = cowboy2;
         this.cowboy1 = cb1;
         this.cowboy2 = cb2;
         this.cowboy1.setX(499);
@@ -95,10 +97,10 @@ public class Battle extends JPanel implements ActionListener {
         while (cowboyAlive && mexicanAlive) {
             if (random < 2) {
                 cowboyAlive = false;
-                erl.kill(playerPID);
+                erl.kill(cowboy1PID, cowboy2PID);
             } else if (shoot == true) {
                 mexicanAlive = false;
-                erl.kill(killPID);
+                erl.kill(cowboy2PID, cowboy1PID);
             }
 
 
