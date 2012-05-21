@@ -10,6 +10,7 @@ public class ErlController {
     private OtpNode node;
     private OtpMbox mbox;
     private OtpErlangPid playerPID = null;
+    private OtpErlangPid killPID = null;
     private World world;
 
 	//Constuctor
@@ -31,6 +32,14 @@ public class ErlController {
                 OtpErlangObject[] o = new OtpErlangObject[]{new OtpErlangAtom("move"), dir};
                 OtpErlangTuple tuple = new OtpErlangTuple(o);
                 mbox.send(playerPID, tuple);
+        }
+        public void kill(OtpErlangPid cowboyPID)
+        {
+            
+            killPID = cowboyPID;
+            OtpErlangObject[] o = new OtpErlangObject[]{new OtpErlangAtom("exit")};
+            OtpErlangTuple tuple = new OtpErlangTuple(o);
+            mbox.send(killPID, tuple); // hmmm vilken pid?
         }
 
         public void run() {
@@ -68,11 +77,10 @@ public class ErlController {
                                         boolean isHuman;
                                         if(a.equals("battle"))
                                         {
-                                            Cowboy cb1 = new Cowboy() ;// test
-                                            Cowboy cb2= new Cowboy();// test
-                                            cb1 = (Cowboy)cowboys.get(pid1);
-                                            cb1 = (Cowboy)cowboys.get(pid1);
-                                            world.startBattle(cb1,cb2);
+                                            Cowboy cb1= (Cowboy)cowboys.get(pid1);;// test
+                                            Cowboy cb2= (Cowboy)cowboys.get(pid2);// test
+                                           
+                                            world.startBattle(cb1,playerPID,cb2,killPID);
                                             
                                         }
                                         if (a.equals("human")) 

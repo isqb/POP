@@ -1,3 +1,4 @@
+import com.ericsson.otp.erlang.OtpErlangPid;
 import java.awt.event.KeyEvent;
 import java.awt.*;
 import java.awt.event.KeyListener;
@@ -101,9 +102,10 @@ public class World extends JPanel implements KeyListener {
     	
     }
 
-    public void startBattle(Cowboy cb1,Cowboy cb2)
+    public void startBattle(Cowboy cb1,OtpErlangPid cowboy1,Cowboy cb2, OtpErlangPid cowboy2)
     {
-        Battle battle = new Battle(cb1,cb2);
+        
+        Battle battle = new Battle(cb1,cowboy1,cb2,cowboy2);
         JFrame battleFrame = new JFrame();
         battleFrame.setAlwaysOnTop(true);
         battleFrame.add(battle);
@@ -122,7 +124,7 @@ public class World extends JPanel implements KeyListener {
         {
             Cowboy cb1 = new Cowboy(499,250,createImageIcon("cowboyLeft.png"));
             Cowboy cb2 = new Cowboy(501,250,createImageIcon("cowboyRight.png"));
-            this.startBattle(cb1,cb2);
+            //this.startBattle(cb1,cb2);
         }
         else if (c == 'w'  ||  c == 'a'  ||
             c == 's'  ||  c == 'd') {
