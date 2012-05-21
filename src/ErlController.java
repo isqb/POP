@@ -73,16 +73,16 @@ public class ErlController {
                                         int newY = ((int)y.intValue())*(560/100);
                                         //String s = (String)state.atomValue();
 
-                                        Hashtable cowboys = world.getCowboys();
-                                        boolean isHuman;
                                         if(a.equals("battle"))
                                         {
-                                            Cowboy cb1= (Cowboy)cowboys.get(pid1);;// test
-                                            Cowboy cb2= (Cowboy)cowboys.get(pid2);// test
+                                            //Cowboy cb1= (Cowboy)cowboys.get(pid1);// test
+                                            //Cowboy cb2= (Cowboy)cowboys.get(pid2);// test
                                            
-                                            world.startBattle(cb1,playerPID,cb2,killPID);
-                                            
+                                            world.startBattle(from1, from2);
                                         }
+                                        
+                                        Hashtable cowboys = world.getCowboys();
+                                        boolean isHuman;
                                         if (a.equals("human")) 
                                             {
                                                 isHuman = true;

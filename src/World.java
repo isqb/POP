@@ -9,8 +9,10 @@ public class World extends JPanel implements KeyListener {
     
     private final int MAXCOWBOYS = 25;
     private int numberOfCowboys = 0;
-    Hashtable cowboys = new Hashtable();
-    Cowboy[] cowboylist = new Cowboy[MAXCOWBOYS];
+    private Hashtable cowboys = new Hashtable();
+    private Cowboy[] cowboylist = new Cowboy[MAXCOWBOYS];
+    
+    private boolean inBattle = false;
     
    
     public World()
@@ -102,8 +104,10 @@ public class World extends JPanel implements KeyListener {
     	
     }
 
-    public void startBattle(Cowboy cb1,OtpErlangPid cowboy1,Cowboy cb2, OtpErlangPid cowboy2)
+    public void startBattle(OtpErlangPid cowboy1, OtpErlangPid cowboy2)
     {
+        Cowboy cb1 = (Cowboy)cowboys.get(cowboy1);
+        Cowboy cb2 = (Cowboy)cowboys.get(cowboy2);
         
         Battle battle = new Battle(cb1,cowboy1,cb2,cowboy2);
         JFrame battleFrame = new JFrame();
@@ -119,7 +123,7 @@ public class World extends JPanel implements KeyListener {
     @Override
     public void keyTyped(KeyEvent e) {
         char c = e.getKeyChar();
-        
+
         if (c== 'o')
         {
             Cowboy cb1 = new Cowboy(499,250,createImageIcon("cowboyLeft.png"));
@@ -127,9 +131,11 @@ public class World extends JPanel implements KeyListener {
             //this.startBattle(cb1,cb2);
         }
         else if (c == 'w'  ||  c == 'a'  ||
-            c == 's'  ||  c == 'd') {
-
-            erl.move(Character.toString(c));
+                 c == 's'  ||  c == 'd') {
+            
+            if (!inBattle) {
+                erl.move(Character.toString(c));
+            }
         }
     }
 
