@@ -132,12 +132,14 @@ walk(MapDict,OldCoordinates,NewCoordinates,GunmanPID,GUIPID,FrozenDict,UserPIDs)
 		    io:format("FREEZING OPPONENT"),
 		    OpponentPID ! freeze,
 		    FrozenDict2 = dict:store(OpponentPID,true,FrozenDict),
+		    GunmanPID ! freeze,
+		    FrozenDict3 = dict:store(OpponentPID,true,FrozenDict2),
 		    io:format("OPPONENT FROZEN!"),
 		    io:format("START BATTLE, ~p VS ~p, GUIPID: ~p~n",[GunmanPID,OpponentPID,GUIPID]),
 		    battle(GunmanPID,OpponentPID,GUIPID),
 		    io:format("BATTLE ENDED"),
 		    GunmanPID ! {newposition, OldCoordinates},
-		    mainloop(UserPIDs,MapDict,GUIPID, FrozenDict2);
+		    mainloop(UserPIDs,MapDict,GUIPID, FrozenDict3);
 	      true -> 
 		    GunmanPID ! {newposition, OldCoordinates},
 		    mainloop(UserPIDs,MapDict,GUIPID, FrozenDict)
