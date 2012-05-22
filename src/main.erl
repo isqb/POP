@@ -30,6 +30,7 @@ mainloop(UserPIDs, MapDict,GUIPID,FrozenDict) ->
 	    mainloop(UserPIDs2,MapDict2,GUIPID,FrozenDict2);
 	{unfreeze, PID} ->
 	    FrozenDict2 = dict:store(PID,false,FrozenDict),
+	    PID ! {newposition, getCoordinates(PID,MapDict)},
 	    mainloop(UserPIDs,MapDict,GUIPID,FrozenDict2);
 	{walk, GunmanPID, Direction} ->
 	    {CoordinateX, CoordinateY} = getCoordinates(GunmanPID, MapDict),
