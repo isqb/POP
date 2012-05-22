@@ -23,7 +23,10 @@ botloop(MainPID, GUIPID) ->
 	freeze ->
 	    receive
 		unfreeze ->
-		    io:format("I'm unfrozen!")
+		    io:format("I'm unfrozen!");
+		die ->
+		    MainPID ! {unregister, self()},
+		    io:format("I'm dead")
 	    end,
 	    botloop(MainPID, GUIPID);
 	exit ->

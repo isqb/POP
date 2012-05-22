@@ -12,94 +12,60 @@ start()->
     spawn(fun()-> bot:initbot(Main,GUIPID) end),
     timer:sleep(1000),
     spawn(fun()-> human:inithumanplayer(Main,GUIPID) end),
-    Dict = dict:new(),
-    mainloop([], Dict,GUIPID).
+    MapDict = dict:new(),
+    FrozenDict = dict:new(),
+    mainloop([], MapDict,GUIPID,FrozenDict).
 
-mainloop(UserPIDs, MapDict,GUIPID) ->
+mainloop(UserPIDs, MapDict,GUIPID,FrozenDict) ->
     receive
 	{register, PID,Coordinates} ->
 	    io:format("Player ~p registered! ~n", [PID]),
 	    MapDict2 = dict:store(Coordinates, PID, MapDict),
-	    mainloop([PID | UserPIDs], MapDict2,GUIPID);
-
+	    FrozenDict2 = dict:store(PID,false, FrozenDict),
+	    mainloop([PID | UserPIDs], MapDict2,GUIPID,FrozenDict2);
+	{unregister, PID} ->
+	    MapDict2 = dict:erase(getCoordinates(PID,MapDict),MapDict),
+	    FrozenDict2 = dict:erase(PID,FrozenDict),
+	    UserPIDs2 = lists:erase(PID,UserPIDs),
+	    mainloop(UserPIDs2,MapDict2,GUIPID,FrozenDict2);
 	{walk, GunmanPID, Direction} ->
-	    {CoordinateX, CoordinateY} = getCoordinates2(GunmanPID, MapDict),
+	    {CoordinateX, CoordinateY} = getCoordinates(GunmanPID, MapDict),
 	    case Direction of
 		["a"] ->
 		    if CoordinateX<1 ->
 			    GunmanPID ! {newposition, {CoordinateX,CoordinateY}},
-			    mainloop(UserPIDs,MapDict,GUIPID);	    
+			    mainloop(UserPIDs,MapDict,GUIPID,FrozenDict);	    
 		       true ->
-			    {FreeSpace,OpponentPID} = checkMap(MapDict,{CoordinateX-1,CoordinateY}),
-			    if FreeSpace ->
-				    GunmanPID ! {newposition, {CoordinateX-1,CoordinateY}},
-				    MapDict2 = dict:erase({CoordinateX,CoordinateY}, MapDict),
-				    MapDict3 = dict:store({CoordinateX-1,CoordinateY}, GunmanPID, MapDict2),  
-				    mainloop(UserPIDs,MapDict3,GUIPID);
-			       true -> %% START BATTLE
-				    io:format("START BATTLE, ~p VS ~p, GUIPID: ~p~n",[GunmanPID,OpponentPID,GUIPID]),
-				    battle(GunmanPID,OpponentPID,GUIPID),
-				    io:format("BATTLE ENDED"),
-				    GunmanPID ! {newposition, {CoordinateX,CoordinateY}},
-				    mainloop(UserPIDs,MapDict,GUIPID)
-			    end
+			    OldCoordinates = {CoordinateX,CoordinateY},
+			    NewCoordinates = {CoordinateX-1,CoordinateY},
+			    walk(MapDict,OldCoordinates,NewCoordinates,GunmanPID,GUIPID,FrozenDict,UserPIDs)
 		    end;
 		["d"] ->
 		    if CoordinateX>99 ->
 			    GunmanPID ! {newposition, {CoordinateX,CoordinateY}},
-			    mainloop(UserPIDs, MapDict, GUIPID);
+			    mainloop(UserPIDs, MapDict, GUIPID, FrozenDict);
 		       true ->
-			    {FreeSpace,OpponentPID} = checkMap(MapDict,{CoordinateX+1,CoordinateY}),
-			    if FreeSpace ->
-				    GunmanPID ! {newposition, {CoordinateX+1,CoordinateY}},
-				    MapDict2 = dict:erase({CoordinateX,CoordinateY}, MapDict),
-				    MapDict3 = dict:store({CoordinateX+1,CoordinateY}, GunmanPID, MapDict2),  
-				    mainloop(UserPIDs,MapDict3, GUIPID);
-			       true -> %% START BATTLE
-				    io:format("START BATTLE, ~p VS ~p, GUIPID: ~p~n",[GunmanPID,OpponentPID,GUIPID]),
-				    battle(GunmanPID,OpponentPID,GUIPID),
-				    io:format("BATTLE ENDED"),
-				    GunmanPID ! {newposition, {CoordinateX,CoordinateY}},
-				    mainloop(UserPIDs,MapDict,GUIPID)		 
-			    end
+			    OldCoordinates = {CoordinateX,CoordinateY},
+			    NewCoordinates = {CoordinateX+1,CoordinateY},
+			    walk(MapDict,OldCoordinates,NewCoordinates,GunmanPID,GUIPID,FrozenDict,UserPIDs)		 
 		    end;
 		["s"] ->
 		    if CoordinateY>99 ->
 			    GunmanPID ! {newposition, {CoordinateX,CoordinateY}},
-			    mainloop(UserPIDs, MapDict, GUIPID);
+			    mainloop(UserPIDs, MapDict, GUIPID,FrozenDict);
 		       true ->
-			    {FreeSpace,OpponentPID} = checkMap(MapDict,{CoordinateX,CoordinateY+1}),
-			    if FreeSpace ->
-				    GunmanPID ! {newposition, {CoordinateX,CoordinateY+1}},
-				    MapDict2 = dict:erase({CoordinateX,CoordinateY}, MapDict),
-				    MapDict3 = dict:store({CoordinateX,CoordinateY+1}, GunmanPID, MapDict2),  
-				    mainloop(UserPIDs,MapDict3, GUIPID);
-			       true -> %% START BATTLE
-				    io:format("START BATTLE, ~p VS ~p, GUIPID: ~p~n",[GunmanPID,OpponentPID,GUIPID]),
-				    battle(GunmanPID,OpponentPID,GUIPID),
-				    io:format("BATTLE ENDED"),
-				    GunmanPID ! {newposition, {CoordinateX,CoordinateY}},
-				    mainloop(UserPIDs,MapDict,GUIPID)			 
-			    end
+			    OldCoordinates = {CoordinateX,CoordinateY},
+			    NewCoordinates = {CoordinateX,CoordinateY+1},
+			    walk(MapDict,OldCoordinates,NewCoordinates,GunmanPID,GUIPID,FrozenDict,UserPIDs)			 
 		    end;
 		["w"] ->
 		    if CoordinateY<1 ->
 			    GunmanPID ! {newposition, {CoordinateX,CoordinateY}},
-			    mainloop(UserPIDs, MapDict, GUIPID);
+			    mainloop(UserPIDs, MapDict, GUIPID,FrozenDict);
 		       true ->
-			    {FreeSpace,OpponentPID} = checkMap(MapDict,{CoordinateX,CoordinateY-1}),
-			    if FreeSpace ->
-				    GunmanPID ! {newposition, {CoordinateX,CoordinateY-1}},
-				    MapDict2 = dict:erase({CoordinateX,CoordinateY}, MapDict),
-				    MapDict3 = dict:store({CoordinateX,CoordinateY-1}, GunmanPID, MapDict2),  
-				    mainloop(UserPIDs,MapDict3, GUIPID);
-			       true -> %% START BATTLE
-				    io:format("START BATTLE, ~p VS ~p, GUIPID: ~p~n",[GunmanPID,OpponentPID,GUIPID]),
-				    battle(GunmanPID,OpponentPID,GUIPID),
-				    io:format("BATTLE ENDED"),
-				    GunmanPID ! {newposition, {CoordinateX,CoordinateY}},
-				    mainloop(UserPIDs,MapDict,GUIPID)		 
-			    end
+			    OldCoordinates = {CoordinateX,CoordinateY},
+			    NewCoordinates = {CoordinateX,CoordinateY-1},
+			    walk(MapDict,OldCoordinates,NewCoordinates,GunmanPID,GUIPID,FrozenDict,UserPIDs)
 		    end;
 		exit ->
 		    exitall(UserPIDs);
@@ -108,7 +74,7 @@ mainloop(UserPIDs, MapDict,GUIPID) ->
 		_Else ->
 		    io:format("Invalid input, try again! ~n"),	
 		    GunmanPID ! {newposition, {CoordinateX,CoordinateY}},
-		    mainloop(UserPIDs, MapDict, GUIPID)	      
+		    mainloop(UserPIDs, MapDict, GUIPID,FrozenDict)	      
 	    end 
     end.
 
@@ -120,19 +86,21 @@ checkMap(MapDict, Coordinates) ->
        true ->
 	    {false, dict:fetch(Coordinates,MapDict)}
     end.
-getCoordinates(_GunmanPID, [], _MapDict) ->
+getCoordinates2(_GunmanPID, [], _MapDict) ->
     {error, "No coordinates found!"};
-getCoordinates(GunmanPID, [Head|Tail], MapDict) ->
+getCoordinates2(GunmanPID, [Head|Tail], MapDict) ->
     TempPID = dict:fetch(Head, MapDict),
     if(TempPID == GunmanPID) ->
 	    Head;
       true ->
-	    getCoordinates(GunmanPID, Tail, MapDict)
+	    getCoordinates2(GunmanPID, Tail, MapDict)
     end.
 
-getCoordinates2(GunmanPID, MapDict) ->
+getCoordinates(GunmanPID, MapDict) ->
     KeyList = dict:fetch_keys(MapDict),
-    getCoordinates(GunmanPID, KeyList, MapDict).
+    getCoordinates2(GunmanPID, KeyList, MapDict).
+isFrozen(PID, Dict) ->
+    dict:fetch(PID, Dict).
 
 battle(GunmanPID,OpponentPID,GUIPID) ->
     io:format("FREEZING OPPONENT"),
@@ -148,3 +116,26 @@ exitall([]) ->
 exitall([PID | Rest]) ->
     PID ! exit,
     exitall(Rest).
+
+walk(MapDict,OldCoordinates,NewCoordinates,GunmanPID,GUIPID,FrozenDict,UserPIDs) ->
+    {FreeSpace,OpponentPID} = checkMap(MapDict,NewCoordinates),
+    if FreeSpace ->
+	    GunmanPID ! {newposition, NewCoordinates},
+	    MapDict2 = dict:erase(OldCoordinates, MapDict),
+	    MapDict3 = dict:store(NewCoordinates, GunmanPID, MapDict2),  
+	    mainloop(UserPIDs,MapDict3,GUIPID, FrozenDict);
+       true ->
+	    io:format("COLLISION ~n"),
+	    NotFrozen = not isFrozen(OpponentPID,FrozenDict),
+	    io:format("NotFrozen = ~p",[NotFrozen]),
+	    if(NotFrozen) ->  %% START BATTLE
+		    io:format("START BATTLE, ~p VS ~p, GUIPID: ~p~n",[GunmanPID,OpponentPID,GUIPID]),
+		    battle(GunmanPID,OpponentPID,GUIPID),
+		    io:format("BATTLE ENDED"),
+		    GunmanPID ! {newposition, OldCoordinates},
+		    mainloop(UserPIDs,MapDict,GUIPID, FrozenDict);
+	      true -> 
+		    GunmanPID ! {newposition, OldCoordinates},
+		    mainloop(UserPIDs,MapDict,GUIPID, FrozenDict)
+	    end
+       end.
