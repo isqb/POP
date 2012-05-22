@@ -26,7 +26,7 @@ mainloop(UserPIDs, MapDict,GUIPID,FrozenDict) ->
 	{unregister, PID} ->
 	    MapDict2 = dict:erase(getCoordinates(PID,MapDict),MapDict),
 	    FrozenDict2 = dict:erase(PID,FrozenDict),
-	    UserPIDs2 = lists:erase(PID,UserPIDs),
+	    UserPIDs2 = lists:delete(PID,UserPIDs),
 	    mainloop(UserPIDs2,MapDict2,GUIPID,FrozenDict2);
 	{unfreeze, PID} ->
 	    FrozenDict2 = dict:store(PID,false,FrozenDict),
@@ -128,13 +128,13 @@ walk(MapDict,OldCoordinates,NewCoordinates,GunmanPID,GUIPID,FrozenDict,UserPIDs)
        true ->
 	    io:format("COLLISION ~n"),
 	    NotFrozen = not isFrozen(OpponentPID,FrozenDict),
-	    io:format("NotFrozen = ~p",[NotFrozen]),
+	    io:format("(~p is not frozen) is ~p",[OpponentPID,NotFrozen]),
 	    if(NotFrozen) ->  %% START BATTLE
 		    io:format("FREEZING OPPONENT"),
 		    OpponentPID ! freeze,
 		    FrozenDict2 = dict:store(OpponentPID,true,FrozenDict),
 		    GunmanPID ! freeze,
-		    FrozenDict3 = dict:store(OpponentPID,true,FrozenDict2),
+		    FrozenDict3 = dict:store(GunmanPID,true,FrozenDict2),
 		    io:format("OPPONENT FROZEN!"),
 		    io:format("START BATTLE, ~p VS ~p, GUIPID: ~p~n",[GunmanPID,OpponentPID,GUIPID]),
 		    battle(GunmanPID,OpponentPID,GUIPID),
