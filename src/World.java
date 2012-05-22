@@ -128,14 +128,6 @@ public class World extends JPanel implements KeyListener  {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        int keyCode = e.getKeyCode();
-        switch(keyCode) {
-            case KeyEvent.VK_SPACE:
-                if (battle != null) {
-                    battle.setShoot(true);
-                }
-                break;
-        }
     }
 
     @Override
