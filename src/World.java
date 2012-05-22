@@ -135,12 +135,8 @@ public class World extends JPanel implements KeyListener  {
     public void keyTyped(KeyEvent e) {
         char c = e.getKeyChar();
 
-        if (c== 'o')
-        {
-            battle.setShoot(true);
-        }
-        else if (c == 'w'  ||  c == 'a'  ||
-                 c == 's'  ||  c == 'd') {
+        if (c == 'w'  ||  c == 'a'  ||
+            c == 's'  ||  c == 'd') {
             
             if (!inBattle) {
                 erl.move(Character.toString(c));
@@ -150,8 +146,13 @@ public class World extends JPanel implements KeyListener  {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getID() == e.VK_UP) {
-            System.out.println(":D");
+        int keyCode = e.getKeyCode();
+        switch(keyCode) {
+            case KeyEvent.VK_SPACE:
+                if (battle != null) {
+                    battle.setShoot(true);
+                }
+                break;
         }
     }
 
