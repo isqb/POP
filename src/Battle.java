@@ -38,12 +38,12 @@ public class Battle extends JPanel implements ActionListener {
 
     public Battle() {
         
-        cowboy1 = new Cowboy(499,250,createImageIcon("cowboyLeft.png"));
-        cowboy2 = new Cowboy(501,250,createImageIcon("cowboyRight.png"));
+        cowboy1 = new Cowboy(499,250,createImageIcon("Graphics/cowboyLeft.png"));
+        cowboy2 = new Cowboy(501,250,createImageIcon("Graphics/cowboyRight.png"));
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
         this.setDoubleBuffered(true);
-        this.add(new JLabel(createImageIcon("battle.jpg")));
+        this.add(new JLabel(createImageIcon("Graphics/battle.jpg")));
         timer.setInitialDelay(1000);
         timer.addActionListener(this);
         timer.start();
@@ -62,7 +62,7 @@ public class Battle extends JPanel implements ActionListener {
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
         this.setDoubleBuffered(true);
-        this.add(new JLabel(createImageIcon("battle.jpg")));
+        this.add(new JLabel(createImageIcon("Graphics/battle.jpg")));
         timer.setInitialDelay(1000);
         timer.addActionListener(this);
         timer.start();
@@ -116,7 +116,7 @@ public class Battle extends JPanel implements ActionListener {
         g2d.drawImage(cowboy1.getImage(), cowboy1.getX(), cowboy1.getY(), this);
         g2d.drawImage(cowboy2.getImage(), cowboy2.getX(), cowboy2.getY(), this);
         //if (fight == true) {
-            g2d.drawImage(createImageIcon("Shoot.png").getImage(), 200, 200, this); // sets the shoot image
+            g2d.drawImage(createImageIcon("Graphics/Shoot.png").getImage(), 200, 200, this); // sets the shoot image
         //}
 
 
@@ -145,8 +145,8 @@ public class Battle extends JPanel implements ActionListener {
 
         }
         if (walkCounter < walkTopCounter - 0.1f) {
-            cowboy1.setImage(createImageIcon("cowboyLeft.png"));
-            cowboy2.setImage(createImageIcon("cowboyRight.png"));
+            cowboy1.setImage(createImageIcon("Graphics/cowboyLeft.png"));
+            cowboy2.setImage(createImageIcon("Graphics/cowboyRight.png"));
             if (nr == 0) {
                 walkCounter += walkSpeed;
                 cowboy1.setX(cowboy1.getX() - 1);
@@ -168,8 +168,8 @@ public class Battle extends JPanel implements ActionListener {
                 nr = 0;
             }
             if (cowboy1.getX() == 400 && cowboy2.getX() == 600) {
-                cowboy1.setImage(createImageIcon("cowboyRight.png"));
-                cowboy2.setImage(createImageIcon("cowboyLeft.png"));
+                cowboy1.setImage(createImageIcon("Graphics/cowboyRight.png"));
+                cowboy2.setImage(createImageIcon("Graphics/cowboyLeft.png"));
             }
             if (walkCounter == walkTopCounter - 0.1f) {
 

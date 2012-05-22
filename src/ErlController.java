@@ -26,6 +26,10 @@ public class ErlController {
         }
 	}
 
+        public void close() {
+            mbox.send(playerPID, new OtpErlangAtom("close"));
+        }
+
         public void move(String direction) {
                 OtpErlangAtom dir = new OtpErlangAtom(direction);
                 OtpErlangObject[] o = new OtpErlangObject[]{new OtpErlangAtom("move"), dir};
