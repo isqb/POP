@@ -87,6 +87,8 @@ checkMap(MapDict, Coordinates) ->
     Result = lists:filter(fun(X) -> X == Coordinates end, Map),
     if Result == [] -> 
 	    {true, self()};
+       Result == self() ->
+	    {true, self()};
        true ->
 	    {false, dict:fetch(Coordinates,MapDict)}
     end.
@@ -138,7 +140,7 @@ walk(MapDict,OldCoordinates,NewCoordinates,GunmanPID,GUIPID,FrozenDict,UserPIDs)
 		    io:format("OPPONENT FROZEN!"),
 		    io:format("START BATTLE, ~p VS ~p, GUIPID: ~p~n",[GunmanPID,OpponentPID,GUIPID]),
 		    battle(GunmanPID,OpponentPID,GUIPID),
-		    io:format("BATTLE ENDED"),
+		    io:format("BATTLE STARTED"),
 %		    GunmanPID ! {newposition, OldCoordinates},
 		    mainloop(UserPIDs,MapDict,GUIPID, FrozenDict3);
 	      true -> 
