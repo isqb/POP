@@ -48,7 +48,7 @@ humanloop(MainPID, GUIPID) ->
 		    humanloop(MainPID,GUIPID);
 		kill ->
 		    MainPID ! {unregister, self()},
-		    io:format("I'm dead")
+		    io:format("I'm dead (Human)")
 	    end;
 	exit ->
 	    io:format("Gunmanloop with pid ~p exited~n",[self()]);
