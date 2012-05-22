@@ -28,6 +28,9 @@ mainloop(UserPIDs, MapDict,GUIPID,FrozenDict) ->
 	    FrozenDict2 = dict:erase(PID,FrozenDict),
 	    UserPIDs2 = lists:erase(PID,UserPIDs),
 	    mainloop(UserPIDs2,MapDict2,GUIPID,FrozenDict2);
+	{unfreeze, PID} ->
+	    FrozenDict2 = dict:store(PID,false,FrozenDict),
+	    mainloop(UserPIDs,MapDict,GUIPID,FrozenDict2);
 	{walk, GunmanPID, Direction} ->
 	    {CoordinateX, CoordinateY} = getCoordinates(GunmanPID, MapDict),
 	    case Direction of
@@ -103,9 +106,6 @@ isFrozen(PID, Dict) ->
     dict:fetch(PID, Dict).
 
 battle(GunmanPID,OpponentPID,GUIPID) ->
-    io:format("FREEZING OPPONENT"),
-    OpponentPID ! freeze,
-    io:format("OPPONENT FROZEN!"),
     GUIPID ! {battle,bot,GunmanPID,OpponentPID,1337,42}, %% HÄR SKICKAS BATTLETUPELN TILL JAVA
     io:format("Occupied by ~p! BATTLE! ~n", [OpponentPID]).
 
@@ -129,11 +129,15 @@ walk(MapDict,OldCoordinates,NewCoordinates,GunmanPID,GUIPID,FrozenDict,UserPIDs)
 	    NotFrozen = not isFrozen(OpponentPID,FrozenDict),
 	    io:format("NotFrozen = ~p",[NotFrozen]),
 	    if(NotFrozen) ->  %% START BATTLE
+		    io:format("FREEZING OPPONENT"),
+		    OpponentPID ! freeze,
+		    FrozenDict2 = dict:store(OpponentPID,true,FrozenDict),
+		    io:format("OPPONENT FROZEN!"),
 		    io:format("START BATTLE, ~p VS ~p, GUIPID: ~p~n",[GunmanPID,OpponentPID,GUIPID]),
 		    battle(GunmanPID,OpponentPID,GUIPID),
 		    io:format("BATTLE ENDED"),
 		    GunmanPID ! {newposition, OldCoordinates},
-		    mainloop(UserPIDs,MapDict,GUIPID, FrozenDict);
+		    mainloop(UserPIDs,MapDict,GUIPID, FrozenDict2);
 	      true -> 
 		    GunmanPID ! {newposition, OldCoordinates},
 		    mainloop(UserPIDs,MapDict,GUIPID, FrozenDict)

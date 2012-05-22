@@ -43,7 +43,12 @@ humanloop(MainPID, GUIPID) ->
 	freeze ->
 	    receive
 		unfreeze ->
-		    io:format("I'm unfrozen!")
+		    io:format("I'm unfrozen!"),
+		    MainPID ! {unfreeze, self()},
+		    humanloop(MainPID,GUIPID);
+		kill ->
+		    MainPID ! {unregister, self()},
+		    io:format("I'm dead")
 	    end;
 	exit ->
 	    io:format("Gunmanloop with pid ~p exited~n",[self()]);
