@@ -5,7 +5,7 @@ import java.awt.event.KeyListener;
 import java.util.Hashtable;
 import javax.swing.*;
 
-public class World extends JPanel implements KeyListener {
+public class World extends JPanel implements KeyListener  {
     
     private final int MAXCOWBOYS = 25;
     private int numberOfCowboys = 0;
@@ -62,10 +62,10 @@ public class World extends JPanel implements KeyListener {
 
         ImageIcon image;
         if (isHuman) {
-            image = createImageIcon("cowboyDown.png");
+            image = createImageIcon("Graphics/cowboyDown.png");
         }
         else {
-            image = createImageIcon("skeleton.png");
+            image = createImageIcon("Graphics/skeleton.png");
         }
 
     	cowboylist[numberOfCowboys] = new Cowboy(x, y, image);
@@ -112,7 +112,6 @@ public class World extends JPanel implements KeyListener {
         battles.add(Integer.toString(cowboy2.id()));
         Cowboy cb1 = (Cowboy)cowboys.get(cowboy1);
         Cowboy cb2 = (Cowboy)cowboys.get(cowboy2);
-        
         Battle battle = new Battle(cb1,cowboy1,cb2,cowboy2);
         JFrame battleFrame = new JFrame();
         battleFrame.setAlwaysOnTop(true);
@@ -140,6 +139,7 @@ public class World extends JPanel implements KeyListener {
 
         if (c== 'o')
         {
+            /*
             //Cowboy cb1 = new Cowboy(499,250,createImageIcon("cowboyLeft.png"));
             //Cowboy cb2 = new Cowboy(501,250,createImageIcon("cowboyRight.png"));
             //this.startBattle(cb1,cb2);
@@ -151,7 +151,7 @@ public class World extends JPanel implements KeyListener {
             battle.addKeyListener(this);// 'this' orsakar att vi använder World keyListener
             battleFrame.setSize(1024, 320);
             battleFrame.setResizable(true);
-            battleFrame.setVisible(true);
+            battleFrame.setVisible(true);*/
         }
         else if (c == 'w'  ||  c == 'a'  ||
                  c == 's'  ||  c == 'd') {
