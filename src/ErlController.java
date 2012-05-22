@@ -11,6 +11,7 @@ public class ErlController {
     private OtpMbox mbox;
     private OtpErlangPid playerPID = null;
     private World world;
+    private boolean inBattle = false;
 
 	//Constuctor
     public ErlController() {}
@@ -45,10 +46,9 @@ public class ErlController {
                 humanBattle = true;
             }
             
-            world.endBattle(winner, loser, humanBattle);
-            OtpErlangObject[] o = new OtpErlangObject[]{new OtpErlangAtom("exit")};
-            OtpErlangTuple tuple = new OtpErlangTuple(o);
-            mbox.send(loser, tuple); // hmmm vilken pid?
+            world.endBattle(loser, humanBattle);
+            mbox.send(winner, new OtpErlangAtom("unfreeze"));
+            mbox.send(loser, new OtpErlangAtom("kill")); // hmmm vilken pid?
         }
 
         public void run() {
@@ -85,7 +85,6 @@ public class ErlController {
                                         if (pl.equals("human")) {
                                             
                                             isHuman = true;
-                                            playerPID = player1PID;
                                         }
                                         else {
                                             
@@ -94,16 +93,22 @@ public class ErlController {
                                         
                                         if(cmd.equals("battle")) {
                                             
-                                            boolean human = false;
+                                            boolean humanBattle = false;
                                             if ((int)player1PID.id() == (int)playerPID.id()  ||
                                                 (int)player2PID.id() == (int)playerPID.id()) {
                                                 
-                                                human = true;
+                                                humanBattle = true;
                                             }
-                                            world.startBattle(player1PID, player2PID, human);
+                                            if (!inBattle) {
+                                                world.startBattle(player1PID, player2PID, humanBattle, this);
+                                            }
+                                            inBattle = humanBattle;
                                         }
                                         else if(cmd.equals("move")) {
-                                        
+
+                                            if (isHuman) {
+                                                playerPID = player1PID;
+                                            }
                                             Hashtable cowboys = world.getCowboys();
                                             int pid = (int)player1PID.id();
                                             int newX = ((int)x.intValue())*(560/100);

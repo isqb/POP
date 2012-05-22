@@ -3,6 +3,8 @@ import com.ericsson.otp.erlang.OtpErlangPid;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -17,7 +19,7 @@ import java.util.Random;
  *
  * @author lokarburken
  */
-public class Battle extends JPanel implements ActionListener {
+public class Battle extends JPanel implements Runnable, ActionListener {
 
     private static final Timer timer = new Timer(100, null);
     private int nr = 0;
@@ -50,11 +52,12 @@ public class Battle extends JPanel implements ActionListener {
 
     }
 
-    public Battle(Cowboy cb1, OtpErlangPid cowboy1, Cowboy cb2, OtpErlangPid cowboy2) {
-        this.cowboy1PID = cowboy1;
-        this.cowboy2PID = cowboy2;
-        this.cowboy1 = cb1;
-        this.cowboy2 = cb2;
+    public Battle(OtpErlangPid cowboy1PID, OtpErlangPid cowboy2PID, ErlController erl) {
+        this.erl = erl;
+        this.cowboy1PID = cowboy1PID;
+        this.cowboy2PID = cowboy2PID;
+        this.cowboy1 = new Cowboy(499,250,createImageIcon("Graphics/cowboyLeft.png"));
+        this.cowboy2 = new Cowboy(501,250,createImageIcon("Graphics/cowboyRight.png"));
         this.cowboy1.setX(499);
         this.cowboy1.setY(250);
         this.cowboy2.setX(501);
@@ -78,6 +81,10 @@ public class Battle extends JPanel implements ActionListener {
         this.fight = fight;
     }
 
+    public void run() {
+        System.out.println("new thread!");
+    }
+
     protected static ImageIcon createImageIcon(String path) {
         java.net.URL imgURL = World.class.getResource(path);
         if (imgURL != null) {
@@ -88,24 +95,25 @@ public class Battle extends JPanel implements ActionListener {
         }
     }
 
-    public void fight() {
-        int random = generator.nextInt(30);
-        boolean cowboyAlive = true;
-        boolean mexicanAlive = true;
+    public void fight() throws InterruptedException {
+        int random;
+        boolean bothAlive = true;
 
-
-        while (cowboyAlive && mexicanAlive) {
-            if (random < 2) {
-                cowboyAlive = false;
-                erl.kill(cowboy1PID, cowboy2PID);
-            } else if (shoot == true) {
-                mexicanAlive = false;
+        while (bothAlive) {
+            random = generator.nextInt(100);
+            System.out.println(random);
+            Thread.sleep(400);
+            if (shoot) {
+                bothAlive = false;
+                Thread.sleep(3000);
                 erl.kill(cowboy2PID, cowboy1PID);
+            } else if (random < 2) {
+                bothAlive = false;
+                Thread.sleep(3000);
+                erl.kill(cowboy1PID, cowboy2PID);
             }
-
-
         }
-
+        System.out.println("some1 died!");
     }
 
     @Override
@@ -115,14 +123,12 @@ public class Battle extends JPanel implements ActionListener {
 
         g2d.drawImage(cowboy1.getImage(), cowboy1.getX(), cowboy1.getY(), this);
         g2d.drawImage(cowboy2.getImage(), cowboy2.getX(), cowboy2.getY(), this);
-        //if (fight == true) {
-            g2d.drawImage(createImageIcon("Graphics/Shoot.png").getImage(), 200, 200, this); // sets the shoot image
-        //}
-
+        if (fight == true) {
+            g2d.drawImage(createImageIcon("Graphics/Shoot.png").getImage(), 400, 20, this); // sets the shoot image
+        }
 
         Toolkit.getDefaultToolkit().sync();
         g.dispose();
-
     }
 
     @Override
@@ -132,35 +138,30 @@ public class Battle extends JPanel implements ActionListener {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_IN, counter));
         g2d.setPaint(Color.blue);
-
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
 
-
         if (counter < topCounter - 0.1f) {
             counter += fadeSpeed;
-
 
         }
         if (walkCounter < walkTopCounter - 0.1f) {
             cowboy1.setImage(createImageIcon("Graphics/cowboyLeft.png"));
             cowboy2.setImage(createImageIcon("Graphics/cowboyRight.png"));
+            walkCounter += walkSpeed;
             if (nr == 0) {
-                walkCounter += walkSpeed;
                 cowboy1.setX(cowboy1.getX() - 1);
                 cowboy2.setX(cowboy2.getX() + 1);
                 nr++;
             } else if (nr == 1) {
-                walkCounter += walkSpeed;
                 cowboy1.setX(cowboy1.getX() - 1);
                 cowboy2.setX(cowboy2.getX() + 1);
                 cowboy1.setY(cowboy1.getY() + 1);
                 cowboy2.setY(cowboy2.getY() + 1);
                 nr++;
             } else {
-                walkCounter += walkSpeed;
                 cowboy1.setX(cowboy1.getX() - 1);
                 cowboy2.setX(cowboy2.getX() + 1);
                 cowboy1.setY(cowboy1.getY() - 1);
@@ -168,16 +169,17 @@ public class Battle extends JPanel implements ActionListener {
                 nr = 0;
             }
             if (cowboy1.getX() == 400 && cowboy2.getX() == 600) {
+                System.out.println("shoot!");
+                this.setFight(true);
                 cowboy1.setImage(createImageIcon("Graphics/cowboyRight.png"));
                 cowboy2.setImage(createImageIcon("Graphics/cowboyLeft.png"));
+                repaint();
+                try {
+                    this.fight();
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Battle.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
-            if (walkCounter == walkTopCounter - 0.1f) {
-
-                this.setFight(true);
-                this.fight();
-
-            }
-
         }
         repaint();
     }

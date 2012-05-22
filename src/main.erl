@@ -26,8 +26,12 @@ mainloop(UserPIDs, MapDict,GUIPID,FrozenDict) ->
 	{unregister, PID} ->
 	    MapDict2 = dict:erase(getCoordinates(PID,MapDict),MapDict),
 	    FrozenDict2 = dict:erase(PID,FrozenDict),
-	    UserPIDs2 = lists:erase(PID,UserPIDs),
+	    UserPIDs2 = lists:delete(PID,UserPIDs),
 	    mainloop(UserPIDs2,MapDict2,GUIPID,FrozenDict2);
+	{unfreeze, PID} ->
+	    FrozenDict2 = dict:store(PID,false,FrozenDict),
+	    PID ! {newposition, getCoordinates(PID,MapDict)},
+	    mainloop(UserPIDs,MapDict,GUIPID,FrozenDict2);
 	{walk, GunmanPID, Direction} ->
 	    {CoordinateX, CoordinateY} = getCoordinates(GunmanPID, MapDict),
 	    case Direction of
@@ -83,6 +87,8 @@ checkMap(MapDict, Coordinates) ->
     Result = lists:filter(fun(X) -> X == Coordinates end, Map),
     if Result == [] -> 
 	    {true, self()};
+       Result == self() ->
+	    {true, self()};
        true ->
 	    {false, dict:fetch(Coordinates,MapDict)}
     end.
@@ -103,9 +109,6 @@ isFrozen(PID, Dict) ->
     dict:fetch(PID, Dict).
 
 battle(GunmanPID,OpponentPID,GUIPID) ->
-    io:format("FREEZING OPPONENT"),
-    OpponentPID ! freeze,
-    io:format("OPPONENT FROZEN!"),
     GUIPID ! {battle,bot,GunmanPID,OpponentPID,1337,42}, %% HÄR SKICKAS BATTLETUPELN TILL JAVA
     io:format("Occupied by ~p! BATTLE! ~n", [OpponentPID]).
 
@@ -127,13 +130,19 @@ walk(MapDict,OldCoordinates,NewCoordinates,GunmanPID,GUIPID,FrozenDict,UserPIDs)
        true ->
 	    io:format("COLLISION ~n"),
 	    NotFrozen = not isFrozen(OpponentPID,FrozenDict),
-	    io:format("NotFrozen = ~p",[NotFrozen]),
+	    io:format("(~p is not frozen) is ~p",[OpponentPID,NotFrozen]),
 	    if(NotFrozen) ->  %% START BATTLE
+		    io:format("FREEZING OPPONENT"),
+		    OpponentPID ! freeze,
+		    FrozenDict2 = dict:store(OpponentPID,true,FrozenDict),
+		    GunmanPID ! freeze,
+		    FrozenDict3 = dict:store(GunmanPID,true,FrozenDict2),
+		    io:format("OPPONENT FROZEN!"),
 		    io:format("START BATTLE, ~p VS ~p, GUIPID: ~p~n",[GunmanPID,OpponentPID,GUIPID]),
 		    battle(GunmanPID,OpponentPID,GUIPID),
-		    io:format("BATTLE ENDED"),
-		    GunmanPID ! {newposition, OldCoordinates},
-		    mainloop(UserPIDs,MapDict,GUIPID, FrozenDict);
+		    io:format("BATTLE STARTED"),
+%		    GunmanPID ! {newposition, OldCoordinates},
+		    mainloop(UserPIDs,MapDict,GUIPID, FrozenDict3);
 	      true -> 
 		    GunmanPID ! {newposition, OldCoordinates},
 		    mainloop(UserPIDs,MapDict,GUIPID, FrozenDict)

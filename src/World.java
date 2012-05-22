@@ -13,7 +13,8 @@ public class World extends JPanel implements KeyListener  {
     private Cowboy[] cowboylist = new Cowboy[MAXCOWBOYS];
     
     private boolean inBattle = false;
-    private List battles = new List();
+    Battle battle;
+    JFrame battleFrame;
     
    
     public World()
@@ -99,21 +100,17 @@ public class World extends JPanel implements KeyListener  {
     	*/
     	cowboy.setY(newY);
         cowboy.setX(newX);
-        
+
     	this.repaint();
     	//Image image = cowboy.getImage();
     	
     }
 
-    public void startBattle(OtpErlangPid cowboy1, OtpErlangPid cowboy2, boolean humanBattle)
+    public void startBattle(OtpErlangPid cowboy1, OtpErlangPid cowboy2, boolean humanBattle, ErlController erl)
     {
         inBattle = humanBattle;
-        battles.add(Integer.toString(cowboy1.id()));
-        battles.add(Integer.toString(cowboy2.id()));
-        Cowboy cb1 = (Cowboy)cowboys.get(cowboy1);
-        Cowboy cb2 = (Cowboy)cowboys.get(cowboy2);
-        Battle battle = new Battle(cb1,cowboy1,cb2,cowboy2);
-        JFrame battleFrame = new JFrame();
+        battle = new Battle(cowboy1,cowboy2, erl);
+        battleFrame = new JFrame();
         battleFrame.setAlwaysOnTop(true);
         battleFrame.add(battle);
         battleFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -121,16 +118,17 @@ public class World extends JPanel implements KeyListener  {
         battleFrame.setSize(1024, 320);
         battleFrame.setResizable(true);
         battleFrame.setVisible(true);
+        new Thread(battle).start();
     }
     
-    public void endBattle(OtpErlangPid cowboy1, OtpErlangPid cowboy2, boolean humanBattle) {
+    public void endBattle(OtpErlangPid loser, boolean humanBattle) {
         
         if (humanBattle) {
             
             inBattle = false;
         }
-        battles.remove(Integer.toString(cowboy1.id()));
-        battles.remove(Integer.toString(cowboy2.id()));
+        cowboys.remove(loser.id());
+        battleFrame.dispose();
     }
         
     @Override
@@ -139,19 +137,7 @@ public class World extends JPanel implements KeyListener  {
 
         if (c== 'o')
         {
-            /*
-            //Cowboy cb1 = new Cowboy(499,250,createImageIcon("cowboyLeft.png"));
-            //Cowboy cb2 = new Cowboy(501,250,createImageIcon("cowboyRight.png"));
-            //this.startBattle(cb1,cb2);
-            Battle battle = new Battle();
-            JFrame battleFrame = new JFrame();
-            battleFrame.setAlwaysOnTop(true);
-            battleFrame.add(battle);
-            battleFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            battle.addKeyListener(this);// 'this' orsakar att vi använder World keyListener
-            battleFrame.setSize(1024, 320);
-            battleFrame.setResizable(true);
-            battleFrame.setVisible(true);*/
+            battle.setShoot(true);
         }
         else if (c == 'w'  ||  c == 'a'  ||
                  c == 's'  ||  c == 'd') {
