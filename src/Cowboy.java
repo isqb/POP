@@ -12,7 +12,7 @@ public class Cowboy {
     public Cowboy() {
         this.x = x;
         this.y = y;
-        this.image = createImageIcon("cowboyLeft.png");
+        this.image = createImageIcon("Graphics/cowboyLeft.png");
         
         
     }

@@ -1,6 +1,6 @@
 import com.ericsson.otp.erlang.OtpErlangPid;
-import java.awt.event.KeyEvent;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Hashtable;
 import javax.swing.*;
@@ -21,7 +21,7 @@ public class World extends JPanel implements KeyListener {
       this.setBackground(Color.BLACK);
       this.setFocusable(true);
       this.setDoubleBuffered(true);
-      this.add(new JLabel(createImageIcon("background.png")));
+      this.add(new JLabel(createImageIcon("Graphics/background.png")));
       this.addKeyListener(this);
     }
     
@@ -62,10 +62,10 @@ public class World extends JPanel implements KeyListener {
 
         ImageIcon image;
         if (isHuman) {
-            image = createImageIcon("cowboyDown.png");
+            image = createImageIcon("Graphics/cowboyDown.png");
         }
         else {
-            image = createImageIcon("skeleton.png");
+            image = createImageIcon("Graphics/skeleton.png");
         }
 
     	cowboylist[numberOfCowboys] = new Cowboy(x, y, image);
@@ -182,6 +182,4 @@ public class World extends JPanel implements KeyListener {
             return null;
         }
     }
-    
-    
 }
