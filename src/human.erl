@@ -43,7 +43,7 @@ humanloop(MainPID, GUIPID) ->
 	freeze ->
 	    receive
 		unfreeze ->
-		    io:format("I'm unfrozen!"),
+		    io:format("I'm unfrozen! (Human)"),
 		    MainPID ! {unfreeze, self()},
 		    humanloop(MainPID,GUIPID);
 		kill ->

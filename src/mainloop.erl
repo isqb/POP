@@ -32,14 +32,14 @@ mainloop(UserPIDs, MapDict,GUIPID,FrozenDict) ->
 			    GunmanPID ! {newposition, {CoordinateX,CoordinateY}},
 			    mainloop(UserPIDs, MapDict, GUIPID, FrozenDict);
 		       true ->
-			    tools:walk(MapDict,{CoordinateX,CoordinateY},{CoordinateX+1,CoordinateY},GunmanPID,GUIPID,FrozenDict,UserPIDs)		 
+			    tools:walk(MapDict,{CoordinateX,CoordinateY},{CoordinateX+1,CoordinateY},GunmanPID,GUIPID,FrozenDict,UserPIDs)
 		    end;
 		["s"] ->
 		    if CoordinateY>99 ->
 			    GunmanPID ! {newposition, {CoordinateX,CoordinateY}},
 			    mainloop(UserPIDs, MapDict, GUIPID,FrozenDict);
 		       true ->
-			    tools:walk(MapDict,{CoordinateX,CoordinateY},{CoordinateX,CoordinateY+1},GunmanPID,GUIPID,FrozenDict,UserPIDs)			 
+			    tools:walk(MapDict,{CoordinateX,CoordinateY},{CoordinateX,CoordinateY+1},GunmanPID,GUIPID,FrozenDict,UserPIDs)
 		    end;
 		["w"] ->
 		    if CoordinateY<1 ->
@@ -47,14 +47,8 @@ mainloop(UserPIDs, MapDict,GUIPID,FrozenDict) ->
 			    mainloop(UserPIDs, MapDict, GUIPID,FrozenDict);
 		       true ->
 			    tools:walk(MapDict,{CoordinateX,CoordinateY},{CoordinateX,CoordinateY-1},GunmanPID,GUIPID,FrozenDict,UserPIDs)
-		    end;
-		exit ->
-		    tools:exitall(UserPIDs);
-		["quit"] ->
-		    tools:exitall(UserPIDs);
-		_Else ->
-		    io:format("Invalid input, try again! ~n"),	
-		    GunmanPID ! {newposition, {CoordinateX,CoordinateY}},
-		    mainloop(UserPIDs, MapDict, GUIPID,FrozenDict)	      
-	    end 
+		    end
+	    end;
+	exit ->
+	    tools:exitall(UserPIDs)
     end.

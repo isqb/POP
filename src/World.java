@@ -19,7 +19,7 @@ public class World extends JPanel implements KeyListener  {
       this.setBackground(Color.BLACK);
       this.setFocusable(true);
       this.setDoubleBuffered(true);
-      this.add(new JLabel(createImageIcon("Graphics/background.png")));
+      this.add(new JLabel(GridSimulate.createImageIcon("background.png")));
       this.addKeyListener(this);
     }
 
@@ -48,11 +48,11 @@ public class World extends JPanel implements KeyListener  {
     public void createChar(int pid, double x, double y, boolean isHuman) {
 
         if (isHuman) {
-            ImageIcon image = createImageIcon("Graphics/cowboyDown.png");
+            ImageIcon image = GridSimulate.createImageIcon("cowboyDown.png");
             chars.put(pid, new Cowboy(x, y, image));
         }
         else {
-            ImageIcon image = createImageIcon("Graphics/monsterDown.png");
+            ImageIcon image = GridSimulate.createImageIcon("monsterDown.png");
             chars.put(pid, new Monster(x, y, image));
         }
 
@@ -63,19 +63,19 @@ public class World extends JPanel implements KeyListener  {
     {
         if (newY < character.getY())
         {
-            character.setImage(createImageIcon(character.getDir()+"Upp.png"));
+            character.setImage("Upp.png");
             
         }else if (newY > character.getY())
         {
-            character.setImage(createImageIcon(character.getDir()+"Down.png"));
+            character.setImage("Down.png");
             
         }else if (newX < character.getX())
         {
-            character.setImage(createImageIcon(character.getDir()+"Left.png"));
+            character.setImage("Left.png");
             
         }else if (newX > character.getX())
         {
-            character.setImage(createImageIcon(character.getDir()+"Right.png"));
+            character.setImage("Right.png");
             
         }
     	
@@ -91,14 +91,6 @@ public class World extends JPanel implements KeyListener  {
     {
         inBattle = true;
         battle = new Battle(cowboy, monster, erl);
-        battleFrame = new JFrame();
-        battleFrame.setAlwaysOnTop(true);
-        battleFrame.add(battle);
-        battleFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        battle.addKeyListener(this);// 'this' orsakar att vi använder World keyListener
-        battleFrame.setSize(1024, 320);
-        battleFrame.setResizable(true);
-        battleFrame.setVisible(true);
         new Thread(battle).start();
     }
     
@@ -108,9 +100,8 @@ public class World extends JPanel implements KeyListener  {
             
             inBattle = false;
         }
-        Char cb = (Char)chars.get(loser.id());
-        cb.setImage(createImageIcon("Graphics/grave.png"));
-        battleFrame.dispose();
+        Char ch = (Char)chars.get(loser.id());
+        ch.setImage(GridSimulate.createImageIcon("grave.png"));
     }
         
     @Override
@@ -132,15 +123,5 @@ public class World extends JPanel implements KeyListener  {
 
     @Override
     public void keyReleased(KeyEvent e) {
-    }
-    
-    protected static ImageIcon createImageIcon(String path) {
-        java.net.URL imgURL = World.class.getResource(path);
-        if (imgURL != null) {
-            return new ImageIcon(imgURL);
-        } else {
-            System.err.println("Couldn't find file: " + path);
-            return null;
-        }
     }
 }

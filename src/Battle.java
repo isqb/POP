@@ -1,17 +1,14 @@
-
 import com.ericsson.otp.erlang.OtpErlangPid;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import java.util.Random;
+import javax.swing.JFrame;
 /*
  * To change this template, choose Tools | Templates and open the template in
  * the editor.
@@ -21,33 +18,28 @@ import java.util.Random;
  *
  * @author lokarburken
  */
-public class Battle extends JPanel implements Runnable, ActionListener, KeyListener {
+public class Battle extends JPanel implements Runnable, KeyListener {
 
     private static final Timer timer = new Timer(100, null);
     private int nr = 0;
-    //private float counter = 0f;
-    //private float topCounter = 0.99f;
     private float walkTopCounter = 10.0f;
     private float walkCounter = 0f;
-    //private static final float fadeSpeed = 0.1f; // how quik you want to fade
-    private static final float walkSpeed = 0.1f; // how quik you want to characters to walk
-    Cowboy cowboy;
-    Monster monster;
+    private static final float walkSpeed = 0.1f; // how quick you want to characters to walk
+    private Cowboy cowboy;
+    private Monster monster;
     private Random generator = new Random();
     private ErlController erl;
-    private boolean fight;
-    private OtpErlangPid cowboyPID;
-    private OtpErlangPid monsterPID;
-    boolean shoot;
+    private OtpErlangPid cowboyPID, monsterPID;
+    private boolean fight, shoot;
 
     public Battle() {
         
-        cowboy = new Cowboy(499,250,createImageIcon("Graphics/cowboyLeft.png"));
-        monster = new Monster(501,250,createImageIcon("Graphics/monsterRight.png"));
+        cowboy = new Cowboy(480,250,GridSimulate.createImageIcon("cowboyLeft.png"));
+        monster = new Monster(520,257,GridSimulate.createImageIcon("monsterRight.png"));
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
         this.setDoubleBuffered(true);
-        this.add(new JLabel(createImageIcon("Graphics/battle.jpg")));
+        this.add(new JLabel(GridSimulate.createImageIcon("battle.jpg")));
 
     }
 
@@ -55,62 +47,58 @@ public class Battle extends JPanel implements Runnable, ActionListener, KeyListe
         this.erl = erl;
         this.cowboyPID = cowboyPID;
         this.monsterPID = monsterPID;
-        this.cowboy = new Cowboy(480,250,createImageIcon("Graphics/cowboyLeft.png"));
-        this.monster = new Monster(520,257,createImageIcon("Graphics/monsterRight.png"));
+        this.cowboy = new Cowboy(480,250,GridSimulate.createImageIcon("cowboyLeft.png"));
+        this.monster = new Monster(520,257,GridSimulate.createImageIcon("monsterRight.png"));
         this.setBackground(Color.BLACK);
-        this.setFocusable(true);
-        this.setDoubleBuffered(true);
-        this.addKeyListener(this);
-        this.add(new JLabel(createImageIcon("Graphics/battle.jpg")));
+        this.add(new JLabel(GridSimulate.createImageIcon("battle.jpg")));
         this.shoot = false;
         this.fight = false;
     }
 
-    public void setShoot(boolean shoot) {
-        this.shoot = shoot;
-    }
-
-    public void setFight(boolean fight) {
-        this.fight = fight;
-    }
-
     public void run() {
-        timer.setInitialDelay(1000);
-        timer.addActionListener(this);
-        timer.start();
-    }
-
-    protected static ImageIcon createImageIcon(String path) {
-        java.net.URL imgURL = World.class.getResource(path);
-        if (imgURL != null) {
-            return new ImageIcon(imgURL);
-        } else {
-            System.err.println("Couldn't find file: " + path);
-            return null;
+        JFrame battleFrame = new JFrame();
+        battleFrame.setAlwaysOnTop(true);
+        battleFrame.add(this);
+        battleFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        battleFrame.setSize(1024, 320);
+        battleFrame.setResizable(true);
+        battleFrame.setVisible(true);
+        addKeyListener(this);
+        setFocusable(true);
+        setDoubleBuffered(true);
+        try {
+            actionPerformed();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Battle.class.getName()).log(Level.SEVERE, null, ex);
         }
+        battleFrame.dispose();
     }
 
     public void fight() throws InterruptedException {
-        int random;
-        boolean bothAlive = true;
+        fight = true;
+        int n = 0;
+        int random = generator.nextInt(30)+10;
+        repaint();
+        while (true) {
+            Thread.sleep(100);
 
-        this.addKeyListener(this);
-        while (bothAlive) {
-            repaint();
-            random = 1;
-            //random = generator.nextInt(1000000);
-            //timer.setDelay(400);
-            //Thread.sleep(400);
             if (shoot) {
-                bothAlive = false;
+                cowboy.setImage("RightShoot.png");
+                monster.setImage(GridSimulate.createImageIcon("grave.png"));
+                repaint();
                 Thread.sleep(3000);
                 erl.kill(monsterPID, cowboyPID);
-            } else if (random < 0) {
-                bothAlive = false;
-                //Thread.sleep(3000);
+                break;
+            } else if (n == random) {
+                monster.setImage("LeftShoot.png");
+                cowboy.setImage(GridSimulate.createImageIcon("grave.png"));
+                repaint();
+                Thread.sleep(3000);
                 erl.kill(cowboyPID, monsterPID);
                 System.out.println("You're dead.\nGame over...");
+                break;
             }
+            n++;
         }
     }
 
@@ -121,65 +109,54 @@ public class Battle extends JPanel implements Runnable, ActionListener, KeyListe
 
         g2d.drawImage(cowboy.getImage(), (int)cowboy.getX(), (int)cowboy.getY(), this);
         g2d.drawImage(monster.getImage(), (int)monster.getX(), (int)monster.getY(), this);
-        if (fight == true) {
-            g2d.drawImage(createImageIcon("Graphics/Shoot.png").getImage(), 400, 20, this); // sets the shoot image
+        if (fight) {
+            g2d.drawImage(GridSimulate.createImageIcon("Shoot.png").getImage(), 400, 20, this); // sets the shoot image
         }
 
         Toolkit.getDefaultToolkit().sync();
         g.dispose();
     }
-/*
-    @Override
-    protected void paintComponent(Graphics g) {
 
-        super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_IN, counter));
-        g2d.setPaint(Color.blue);
-    }
-*/
-    @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed() throws InterruptedException {
 
-        /*if (counter < topCounter - 0.1f) {
-            counter += fadeSpeed;
-
-        }*/
-        if (walkCounter < walkTopCounter - 0.1f) {
-            cowboy.setImage(createImageIcon(cowboy.getDir()+"Left.png"));
-            monster.setImage(createImageIcon(monster.getDir()+"Right.png"));
-            walkCounter += walkSpeed;
-            if (nr == 0) {
-                cowboy.setX(cowboy.getX() - 1);
-                monster.setX(monster.getX() + 1);
-                nr++;
-            } else if (nr == 1) {
-                cowboy.setX(cowboy.getX() - 1);
-                monster.setX(monster.getX() + 1);
-                cowboy.setY(cowboy.getY() + 1);
-                monster.setY(monster.getY() + 1);
-                nr++;
-            } else {
-                cowboy.setX(cowboy.getX() - 1);
-                monster.setX(monster.getX() + 1);
-                cowboy.setY(cowboy.getY() - 1);
-                monster.setY(monster.getY() - 1);
-                nr = 0;
-            }
-            if (cowboy.getX() == 450 && monster.getX() == 550) {
-                System.out.println("shoot!");
-                setFight(true);
-                cowboy.setImage(createImageIcon(cowboy.getDir()+"Right.png"));
-                monster.setImage(createImageIcon(monster.getDir()+"Left.png"));
-                repaint();
-                try {
-                    fight();
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Battle.class.getName()).log(Level.SEVERE, null, ex);
+        Thread.sleep(1500);
+        while (true) {
+            Thread.sleep(100);
+            if (walkCounter < walkTopCounter - 0.1f) {
+                cowboy.setImage("Left.png");
+                monster.setImage("Right.png");
+                walkCounter += walkSpeed;
+                if (nr == 0) {
+                    cowboy.setX(cowboy.getX() - 1);
+                    monster.setX(monster.getX() + 1);
+                    nr++;
+                } else if (nr == 1) {
+                    cowboy.setX(cowboy.getX() - 1);
+                    monster.setX(monster.getX() + 1);
+                    cowboy.setY(cowboy.getY() + 1);
+                    monster.setY(monster.getY() + 1);
+                    nr++;
+                } else {
+                    cowboy.setX(cowboy.getX() - 1);
+                    monster.setX(monster.getX() + 1);
+                    cowboy.setY(cowboy.getY() - 1);
+                    monster.setY(monster.getY() - 1);
+                    nr = 0;
+                }
+                if (cowboy.getX() == 450 && monster.getX() == 550) {
+                    cowboy.setImage("Right.png");
+                    monster.setImage("Left.png");
+                    repaint();
+                    try {
+                        fight();
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(Battle.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    break;
                 }
             }
+            repaint();
         }
-        repaint();
     }
 
     public void keyTyped(KeyEvent e) {
@@ -189,9 +166,8 @@ public class Battle extends JPanel implements Runnable, ActionListener, KeyListe
         int keyCode = e.getKeyCode();
         switch(keyCode) {
             case KeyEvent.VK_SPACE:
-                System.out.println("mu");
                 if (fight) {
-                    setShoot(true);
+                    shoot = true;
                 }
                 break;
         }

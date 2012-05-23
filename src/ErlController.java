@@ -10,6 +10,7 @@ public class ErlController {
     private OtpNode node;
     private OtpMbox mbox;
     private OtpErlangPid playerPID = null;
+    private OtpErlangPid mainPID = null;
     private World world;
     private boolean inBattle = false;
 
@@ -28,7 +29,7 @@ public class ErlController {
 	}
 
         public void close() {
-            mbox.send(playerPID, new OtpErlangAtom("close"));
+            mbox.send(mainPID, new OtpErlangAtom("exit"));
         }
 
         public void move(String direction) {
@@ -46,11 +47,10 @@ public class ErlController {
                 
                 humanBattle = true;
             }
-
             inBattle = false;
             world.endBattle(loser, humanBattle);
             mbox.send(winner, new OtpErlangAtom("unfreeze"));
-            mbox.send(loser, new OtpErlangAtom("kill")); // hmmm vilken pid?
+            mbox.send(loser, new OtpErlangAtom("kill"));
         }
 
         public void run() {
@@ -62,7 +62,6 @@ public class ErlController {
                 OtpErlangPid player2PID;
 		OtpErlangLong x;
 		OtpErlangLong y;
-                //OtpErlangAtom state;
 
 		while (true) {
 			try {
@@ -121,6 +120,9 @@ public class ErlController {
                                             }
                                         }
 				}
+                                else {
+                                    mainPID = (OtpErlangPid)object;
+                                }
 			} catch (OtpErlangRangeException ex) {
                                 Logger.getLogger(ErlController.class.getName()).log(Level.SEVERE, null, ex);
                         } catch (OtpErlangDecodeException ex) {

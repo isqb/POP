@@ -34,27 +34,17 @@ public class Char {
 
     public void setImage(ImageIcon img)
     {
-        this.image = img;
+        image = img;
+    }
+
+    public void setImage(String img)
+    {
+        image = GridSimulate.createImageIcon(img);
     }
 
     public Image getImage()
     {
     	return image.getImage();
-    }
-
-    public String getDir() {
-        return "";
-    }
-
-    protected static ImageIcon createImageIcon(String path)
-    {
-        java.net.URL imgURL = World.class.getResource(path);
-        if (imgURL != null) {
-            return new ImageIcon(imgURL);
-        } else {
-            System.err.println("Couldn't find file: " + path);
-            return null;
-        }
     }
 
     public String toString()
