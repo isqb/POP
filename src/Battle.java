@@ -6,7 +6,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.Timer;
 import java.util.Random;
 import javax.swing.JFrame;
 /*
@@ -20,17 +19,15 @@ import javax.swing.JFrame;
  */
 public class Battle extends JPanel implements Runnable, KeyListener {
 
-    private static final Timer timer = new Timer(100, null);
+    private boolean fight = false, shoot = false;
     private int nr = 0;
-    private float walkTopCounter = 10.0f;
-    private float walkCounter = 0f;
-    private static final float walkSpeed = 0.1f; // how quick you want to characters to walk
+    private float walkTopCounter = 10.0f, walkCounter = 0f;
+    private static final float WALKSPEED = 0.1f; // how quick you want to characters to walk
+    private Random generator = new Random();
+    private OtpErlangPid cowboyPID, monsterPID;
+    private ErlController erl;
     private Cowboy cowboy;
     private Monster monster;
-    private Random generator = new Random();
-    private ErlController erl;
-    private OtpErlangPid cowboyPID, monsterPID;
-    private boolean fight, shoot;
 
     public Battle() {
         
@@ -51,8 +48,8 @@ public class Battle extends JPanel implements Runnable, KeyListener {
         this.monster = new Monster(520,257,GridSimulate.createImageIcon("monsterRight.png"));
         this.setBackground(Color.BLACK);
         this.add(new JLabel(GridSimulate.createImageIcon("battle.jpg")));
-        this.shoot = false;
-        this.fight = false;
+        this.setFocusable(true);
+        this.setDoubleBuffered(true);
     }
 
     public void run() {
@@ -64,8 +61,6 @@ public class Battle extends JPanel implements Runnable, KeyListener {
         battleFrame.setResizable(true);
         battleFrame.setVisible(true);
         addKeyListener(this);
-        setFocusable(true);
-        setDoubleBuffered(true);
         try {
             actionPerformed();
         } catch (InterruptedException ex) {
@@ -83,18 +78,14 @@ public class Battle extends JPanel implements Runnable, KeyListener {
             Thread.sleep(100);
 
             if (shoot) {
-                cowboy.setImage("RightShoot.png");
-                monster.setImage(GridSimulate.createImageIcon("grave.png"));
-                repaint();
-                Thread.sleep(3000);
-                erl.kill(monsterPID, cowboyPID);
+                erl.kill(monsterPID, cowboyPID, this, monster, cowboy);
                 break;
             } else if (n == random) {
                 monster.setImage("LeftShoot.png");
                 cowboy.setImage(GridSimulate.createImageIcon("grave.png"));
                 repaint();
-                Thread.sleep(3000);
-                erl.kill(cowboyPID, monsterPID);
+                Thread.sleep(2000);
+                erl.kill(cowboyPID, monsterPID, this, cowboy, monster);
                 System.out.println("You're dead.\nGame over...");
                 break;
             }
@@ -125,7 +116,7 @@ public class Battle extends JPanel implements Runnable, KeyListener {
             if (walkCounter < walkTopCounter - 0.1f) {
                 cowboy.setImage("Left.png");
                 monster.setImage("Right.png");
-                walkCounter += walkSpeed;
+                walkCounter += WALKSPEED;
                 if (nr == 0) {
                     cowboy.setX(cowboy.getX() - 1);
                     monster.setX(monster.getX() + 1);
