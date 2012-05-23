@@ -10,7 +10,7 @@
 
 init_test() ->
     Main = self(),
-    InitPID = spawn(fun() -> bot:initbot(Main) end), %%Spawn a bot for testing
+    InitPID = spawn(fun() -> bot:initbot(Main,self()) end), %%Spawn a bot for testing
     receive
 	{register, InitPID,_Coordinates} ->
 	    Success = true
@@ -20,7 +20,7 @@ init_test() ->
 
 loop_test() ->
     Main = self(),
-    LoopPID = spawn(fun() -> bot:initbot(Main) end), %%Spawn a botloop process for testing
+    LoopPID = spawn(fun() -> bot:initbot(Main,notneeded) end), %%Spawn a botloop process for testing
     LoopPID ! {newposition, {10,1}},
     receive
 	{walk, LoopPID, _Direction1} ->

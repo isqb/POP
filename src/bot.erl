@@ -1,5 +1,19 @@
+%%%-------------------------------------------------------------------
+%%% @author Olof Bjorklund <olbj3883@celsius.it.uu.se>
+%%% @copyright (C) 2012, Olof Bjorklund
+%%% @doc 
+%%% @end
+%%% Created : 23 May 2012 by Olof Bjorklund <olbj3883@celsius.it.uu.se>
+%%%-------------------------------------------------------------------
 -module(bot).
 -export([initbot/2, botloop/2]).
+
+%%--------------------------------------------------------------------
+%% @doc Creates a computer-controlled player, a "bot", to walk the
+%% plains of Sudden Impact and cause havoc. 
+%% @spec initbot(pid(),pid()) -> none()
+%% @end
+%%--------------------------------------------------------------------
 
 initbot(MainPID, GUIPID) ->
     random:seed(now()),
@@ -10,6 +24,11 @@ initbot(MainPID, GUIPID) ->
     MainPID ! {walk, self(), Direction},
     botloop(MainPID, GUIPID).
 
+%%--------------------------------------------------------------------
+%% @doc Process for bots to listen for commands and signals. 
+%% @spec botloop(pid(),pid()) -> none()
+%% @end
+%%--------------------------------------------------------------------
 botloop(MainPID, GUIPID) ->
     receive
 	{newposition, {CoordinateX,CoordinateY}} ->
@@ -33,3 +52,4 @@ botloop(MainPID, GUIPID) ->
 	exit ->
 	    io:format("Botloop with PID ~p exited~n",[self()])
     end.
+
