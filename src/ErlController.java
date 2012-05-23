@@ -37,6 +37,7 @@ public class ErlController {
                 OtpErlangTuple tuple = new OtpErlangTuple(o);
                 mbox.send(playerPID, tuple);
         }
+        
         public void kill(OtpErlangPid loser, OtpErlangPid winner)
         {
             boolean humanBattle = false;
@@ -45,7 +46,8 @@ public class ErlController {
                 
                 humanBattle = true;
             }
-            
+
+            inBattle = false;
             world.endBattle(loser, humanBattle);
             mbox.send(winner, new OtpErlangAtom("unfreeze"));
             mbox.send(loser, new OtpErlangAtom("kill")); // hmmm vilken pid?
@@ -75,11 +77,9 @@ public class ErlController {
                                         player2PID = (OtpErlangPid)msg.elementAt(3);
                                         x = (OtpErlangLong)msg.elementAt(4);
                                         y = (OtpErlangLong)msg.elementAt(5);
-                                        //state = (OtpErlangAtom)msg.elementAt(4);
 
                                         String cmd = (String)command.atomValue();
                                         String pl = (String)player.atomValue();
-                                        //String s = (String)state.atomValue();
                                         
                                         boolean isHuman;
                                         if (pl.equals("human")) {
@@ -93,34 +93,31 @@ public class ErlController {
                                         
                                         if(cmd.equals("battle")) {
                                             
-                                            boolean humanBattle = false;
-                                            if ((int)player1PID.id() == (int)playerPID.id()  ||
-                                                (int)player2PID.id() == (int)playerPID.id()) {
-                                                
-                                                humanBattle = true;
+                                            if (!inBattle  &&  (int)player1PID.id() == (int)playerPID.id()) {
+                                                world.startBattle(player1PID, player2PID);
                                             }
-                                            if (!inBattle) {
-                                                world.startBattle(player1PID, player2PID, humanBattle, this);
+                                            else if(!inBattle  &&  (int)player2PID.id() == (int)playerPID.id()) {
+                                                world.startBattle(player2PID, player1PID);
                                             }
-                                            inBattle = humanBattle;
+                                            inBattle = true;
                                         }
                                         else if(cmd.equals("move")) {
 
                                             if (isHuman) {
                                                 playerPID = player1PID;
                                             }
-                                            Hashtable cowboys = world.getCowboys();
+                                            Hashtable chars = world.getChars();
                                             int pid = (int)player1PID.id();
-                                            int newX = ((int)x.intValue())*(560/100);
-                                            int newY = ((int)y.intValue())*(560/100);
+                                            double newX = x.intValue()*(1024/100);
+                                            double newY = y.intValue()*(580/100);
 
-                                            if (cowboys.containsKey(pid)) {
-                                                world.move((Cowboy)cowboys.get(pid), newX, newY);
+                                            if (chars.containsKey(pid)) {
+                                                world.move((Char)chars.get(pid), newX, newY);
 
                                             }
                                             else {
 
-                                                world.createCowboy(pid, newX, newY, isHuman);
+                                                world.createChar(pid, newX, newY, isHuman);
                                             }
                                         }
 				}

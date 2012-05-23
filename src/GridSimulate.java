@@ -12,7 +12,7 @@ public class GridSimulate extends Thread implements WindowListener
             JFrame frame = new JFrame();
             frame.add(world);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(560, 560);
+            frame.setSize(1024, 580);
             frame.setResizable(true);
             frame.setVisible(true);
             frame.addWindowListener(this);

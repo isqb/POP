@@ -1,39 +1,60 @@
+import java.awt.Image;
 import javax.swing.ImageIcon;
 
 public class Char {
-    int x;
-    int y;
+    double x;
+    double y;
     ImageIcon image;
 
-    public Char(int x, int y, ImageIcon image) {
+    public Char(double x, double y, ImageIcon image) {
         this.x = x;
         this.y = y;
         this.image = image;
     }
 
-    public void setX(int x)
+    public void setX(double x)
     {
     	this.x = x;
     }
 
-    public void setY(int y)
+    public void setY(double y)
     {
     	this.y = y;
     }
 
-    public int getX()
+    public double getX()
     {
     	return x;
     }
 
-    public int getY()
+    public double getY()
     {
     	return y;
     }
 
-    public ImageIcon getImage()
+    public void setImage(ImageIcon img)
     {
-    	return image;
+        this.image = img;
+    }
+
+    public Image getImage()
+    {
+    	return image.getImage();
+    }
+
+    public String getDir() {
+        return "";
+    }
+
+    protected static ImageIcon createImageIcon(String path)
+    {
+        java.net.URL imgURL = World.class.getResource(path);
+        if (imgURL != null) {
+            return new ImageIcon(imgURL);
+        } else {
+            System.err.println("Couldn't find file: " + path);
+            return null;
+        }
     }
 
     public String toString()
