@@ -28,7 +28,7 @@ botloop(MainPID, GUIPID) ->
 		    botloop(MainPID,GUIPID);
 		kill ->
 		    MainPID ! {unregister, self()},
-		    io:format("I'm dead")
+		    io:format("I'm dead (bot)")
 	    end;
 	exit ->
 	    io:format("Botloop with PID ~p exited~n",[self()])

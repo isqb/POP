@@ -37,7 +37,11 @@ walk(MainPID,GunmanPID) ->
     receive
 	{walk, Newcoordinates} ->
 	    io:format("~p~n",[{"You are now at: ", self(), Newcoordinates}]),
-	    {ok, Device} = file:open("human_test_cord.txt", [read]),
+	    PWD = filename:absname(""),
+	    io:format("PWD: ~p ~n",[PWD]),
+	    FilePath = string:concat(PWD,"/human_test_cord.txt"),
+	    io:format("FilePath: ~p ~n", [FilePath]),
+	    {ok, Device} = file:open(FilePath, [read]),
 	    Move = io:get_line(Device, ""),
 	    Direction = string:tokens(Move,"\n"),
 	    io:format("Cords: ~p ~n" , [Direction]),
