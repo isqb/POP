@@ -29,7 +29,7 @@ ebin/%.beam: src/%.erl
 	$(ERLC) $(ERLC_FLAGS) -o ebin $<
 
 start: all
-	(cd ebin && erl -sname "player" -eval 'main:start()')
+	(cd ebin && erl -sname "player" -eval 'start:start()')
 
 test: all
 	(cd ebin && erl -noinput -eval 'eunit:test({dir, "."}, [verbose]), init:stop()')
