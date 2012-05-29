@@ -14,7 +14,7 @@ start()->
     timer:sleep(1000),
     spawn(fun()-> bot:initbot(Main,GUIPID) end),
     timer:sleep(1000),
-    spawn(fun()-> human:inithumanplayer(Main,GUIPID) end),
+    spawn(fun()-> human:inithuman(Main,GUIPID) end),
     MapDict = dict:new(),
     FrozenDict = dict:new(),
     mainloop:mainloop([], MapDict,GUIPID,FrozenDict).

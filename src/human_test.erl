@@ -7,46 +7,76 @@
 
 %% All functions with names ending wiht _test() or _test_() will be
 %% called automatically by make test
-
-init_test() ->
+inithumanplayer_test() ->
     Main = self(),
-    InitPID = spawn(fun() -> inithumanplayer_test(Main) end),
-    receive 
-	{register, InitPID, Coordinates} ->
-	    Success = true,
-	    Cord = Coordinates
+    HumanPID = spawn(fun()-> human:inithuman(Main,Main) end), 		  
+    receive
+	{register,HumanPID, _Irrelevant} ->
+	    io:format("Got registration"),
+	    Result1 = success
     end,
     receive
-	{walk, InitPID, Direction, _Newcoordinates} ->
-	    Result = Direction
+	{move,human,HumanPID,HumanPID,_Irrelevant2,_Irrelevant3} ->
+	    io:format("Got move"),
+	    Result2 = success
     end,
-    exit(InitPID,normal),
-    ?assertEqual(true,Success),
-    ?assertEqual({0,0},Cord),
-    ?assertEqual(["w"], Result).
+    HumanPID ! exit,
+    ?assertEqual(success,Result1),
+    ?assertEqual(success,Result2).
 
-inithumanplayer_test(MainPID) ->
-    random:seed(now()),
-    Coordinates ={0,0},
-    MainPID ! {register, self(),Coordinates},
-    GunmanPID = self(),
-    InputPID = spawn(fun() -> walk(MainPID,GunmanPID) end), 
-    InputPID ! {walk, Coordinates}.
-
-walk(MainPID,GunmanPID) ->
+humanloop_test() ->
+    Main = self(),
+    HumanPID = spawn(fun()-> human:inithuman(Main,Main) end), 		  
     receive
-	{walk, Newcoordinates} ->
-	    io:format("~p~n",[{"You are now at: ", self(), Newcoordinates}]),
-	    PWD = filename:absname(""),
-	    io:format("PWD: ~p ~n",[PWD]),
-	    FilePath = string:concat(PWD,"/human_test_cord.txt"),
-	    io:format("FilePath: ~p ~n", [FilePath]),
-	    {ok, Device} = file:open(FilePath, [read]),
-	    Move = io:get_line(Device, ""),
-	    Direction = string:tokens(Move,"\n"),
-	    io:format("Cords: ~p ~n" , [Direction]),
-	    MainPID ! {walk, GunmanPID, Direction, Newcoordinates},
-	    walk(MainPID,GunmanPID);
-	exit ->
-	    io:format("Input process with PID ~p exited~n",[self()])
-    end.
+	{register,HumanPID, _Irrelevant} ->
+	    ignore
+    end,
+    receive
+	{move,human,HumanPID,HumanPID,_Irrelevant2,_Irrelevant3} ->
+	    ignore
+    end,
+    HumanPID ! {newposition, {1337,42}},
+    receive
+	{move,human,HumanPID,HumanPID,CoordX,CoordY} ->
+	    Result1 = {CoordX,CoordY}
+    end,
+    HumanPID ! {move,w},
+    receive
+	{walk,HumanPID, DirectionW} ->
+	    Result2 = DirectionW
+    end,   
+    HumanPID ! {move,a},
+    receive
+	{walk,HumanPID, DirectionA} ->
+	    Result3 = DirectionA
+    end,
+    HumanPID ! {move,s},
+    receive
+	{walk,HumanPID, DirectionS} ->
+	    Result4 = DirectionS
+    end,
+    HumanPID ! {move,d},
+    receive
+	{walk,HumanPID, DirectionD} ->
+	    Result5 = DirectionD
+    end,
+    HumanPID ! freeze,
+    HumanPID ! unfreeze,
+    receive
+	{unfreeze, HumanPID} ->
+	    Result6 = unfroze
+    end,
+    HumanPID ! freeze,
+    HumanPID ! kill,
+    receive
+	{unregister, HumanPID} ->
+	    Result7 = killed
+    end,
+    HumanPID ! exit,
+    ?assertEqual({1337,42},Result1),
+    ?assertEqual(["w"],Result2),
+    ?assertEqual(["a"],Result3),
+    ?assertEqual(["s"],Result4),
+    ?assertEqual(["d"],Result5),
+    ?assertEqual(unfroze,Result6),
+    ?assertEqual(killed,Result7).
