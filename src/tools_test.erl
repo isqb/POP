@@ -56,7 +56,8 @@ walk(MapDict,OldCoordinates,NewCoordinates,GunmanPID,GUIPID,FrozenDict) ->
 		    FrozenDict2 = dict:store(OpponentPID,true,FrozenDict),
 		    GunmanPID ! freeze,
 		    FrozenDict3 = dict:store(GunmanPID,true,FrozenDict2),
-		    GUIPID ! {battle,bot,GunmanPID,OpponentPID,1337,42};
+		    GUIPID ! {battle,bot,GunmanPID,OpponentPID,1337,42},
+		    GUIPID ! {dict, FrozenDict3};
 	      true -> 
 		    GunmanPID ! {newposition, OldCoordinates}
 	    end
@@ -103,18 +104,24 @@ walk_test() ->
 	{battle,bot,PID1,PID2,1337,42} ->
 	    Result5 = {PID1,PID2}
     end,
-    FrozenDict3 = dict:store(OpponentPID,true,FrozenDict2),
-    walk(MapDict3,OldCoordinates,NewCoordinates2,OwnPID,OwnPID,FrozenDict3),
+    receive
+	{dict, FrozenDict3} ->
+	    Result6 = dict:fetch(OwnPID,FrozenDict3),
+	    Result7 = dict:fetch(OpponentPID,FrozenDict3)
+    end,
+    FrozenDict4 = dict:store(OpponentPID,true,FrozenDict2),
+    walk(MapDict3,OldCoordinates,NewCoordinates2,OwnPID,OwnPID,FrozenDict4),
     receive
 	{newposition, Coordinates2} ->
-	    Result6 = Coordinates2
+	    Result8 = Coordinates2
     end,
     ?assertEqual(NewCoordinates,Result1),
     ?assertEqual([{40,40},NewCoordinates],Result2),
     ?assertEqual(ok,Result3),
     ?assertEqual(ok,Result4),
     ?assertEqual({OwnPID,OpponentPID},Result5),
-    ?assertEqual(Coordinates2,OldCoordinates).
-    
+    ?assertEqual(true,Result6),
+    ?assertEqual(true,Result7),
+    ?assertEqual(OldCoordinates,Result8).
 	 
 	
