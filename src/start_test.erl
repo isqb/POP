@@ -17,9 +17,6 @@ start_test()->
     GUIPID ! self(), %% send MainPID to GUI 
     spawn(fun()-> bot:initbot(Main,GUIPID) end),
     spawn(fun()-> human:inithuman(Main,GUIPID) end),
-    MapDict = dict:new(),
-    FrozenDict = dict:new(),
-    io:format("Hej"),
     receive
 	{register,_PID1,_Coordinates1} ->
 	    io:format("FIRST"),
