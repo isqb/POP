@@ -1,31 +1,22 @@
+%%% @author marcus <marcus@laptopen>
+%%% @copyright (C) 2012, marcus
+%%% @doc
+%%%
+%%% @end
+%%% Created : 29 May 2012 by marcus <marcus@laptopen>
+
 -module(human).
--export([inithumanplayer/2]).
+-export([inithuman/2,humanloop/2]).
 
-inithumanplayer(MainPID, GUIPID) ->
-    random:seed(now()),
-    {CoordinateX,CoordinateY} = {random:uniform(99),random:uniform(99)},
-    MainPID ! {register, self(), {CoordinateX,CoordinateY}},
-    %% InputPID = spawn(fun() -> walk(MainPID,GunmanPID) end), 
-    %% InputPID ! {walk, Coordinates},
-    GUIPID ! {move,human,self(),self(),CoordinateX,CoordinateY},
-    humanloop(MainPID, GUIPID).
-
-%% walk(MainPID,GunmanPID) ->
-%%     receive
-%% 	{walk, Newcoordinates} -> 
-%% 	    io:format("~p~n",[{"Where do you want to go now...", self(), Newcoordinates}]),
-%% 	    {ok, Direction} = 
-%% 	    MainPID ! {walk, GunmanPID, Direction, Newcoordinates},
-%% 	    walk(MainPID,GunmanPID);
-%% 	exit ->
-%% 	    io:format("Input process with PID ~p exited~n",[self()])
-%%     end.
-
+%%--------------------------------------------------------------------
+%% @doc The human loop handling communication with the GUI and the 
+%%      main loop
+%% @spec humanloop(pid(),pid()) -> none()
+%% @end
+%%--------------------------------------------------------------------
 humanloop(MainPID, GUIPID) ->
     receive
 	{newposition, {CoordinateX,CoordinateY}} ->
-	    Node = node(),
-	    io:format("Node: ~p ~n",[Node]),
 	    GUIPID ! {move,human,self(),self(),CoordinateX,CoordinateY},
 	    humanloop(MainPID, GUIPID);
 	{move,w} -> 
@@ -51,7 +42,19 @@ humanloop(MainPID, GUIPID) ->
 		    io:format("I'm dead (Human)")
 	    end;
 	exit ->
-	    io:format("Gunmanloop with pid ~p exited~n",[self()]);
-	close ->
-	    MainPID ! {walk, self(), exit}
+	    io:format("Gunmanloop with pid ~p exited~n",[self()])
     end.
+
+%%--------------------------------------------------------------------
+%% @doc Initiates a human controlled player and registers it to the 
+%%      main process and enters humanloop
+%% @spec inithuman(pid(),pid()) -> none()
+%% @end
+%%--------------------------------------------------------------------
+inithuman(MainPID, GUIPID) ->
+    io:format("Initiating...~n~n"),
+    random:seed(now()),
+    {CoordinateX,CoordinateY} = {random:uniform(99),random:uniform(99)},
+    MainPID ! {register, self(), {CoordinateX,CoordinateY}},
+    GUIPID ! {move,human,self(),self(),CoordinateX,CoordinateY},
+    humanloop(MainPID, GUIPID).

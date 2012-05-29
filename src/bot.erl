@@ -1,10 +1,3 @@
-%%%-------------------------------------------------------------------
-%%% @author Olof Bjorklund <olbj3883@celsius.it.uu.se>
-%%% @copyright (C) 2012, Olof Bjorklund
-%%% @doc 
-%%% @end
-%%% Created : 23 May 2012 by Olof Bjorklund <olbj3883@celsius.it.uu.se>
-%%%-------------------------------------------------------------------
 -module(bot).
 -export([initbot/2, botloop/2]).
 
@@ -14,7 +7,6 @@
 %% @spec initbot(pid(),pid()) -> none()
 %% @end
 %%--------------------------------------------------------------------
-
 initbot(MainPID, GUIPID) ->
     random:seed(now()),
     Coordinates = {random:uniform(99),random:uniform(99)},
@@ -23,7 +15,6 @@ initbot(MainPID, GUIPID) ->
     Direction = lists:nth(random:uniform(4),[["w"],["a"],["d"],["s"]]),
     MainPID ! {walk, self(), Direction},
     botloop(MainPID, GUIPID).
-
 %%--------------------------------------------------------------------
 %% @doc Process for bots to listen for commands and signals. 
 %% @spec botloop(pid(),pid()) -> none()
