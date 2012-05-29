@@ -10,26 +10,51 @@
 
 init_test() ->
     Main = self(),
-    InitPID = spawn(fun() -> bot:initbot(Main,self()) end), %%Spawn a bot for testing
+    BotPID = spawn(fun() -> bot:initbot(Main,Main) end), %%Spawn a bot for testing
     receive
-	{register, InitPID,_Coordinates} ->
+	{register, BotPID,_Coordinates} ->
 	    Success = true
     end,
-    exit(InitPID,normal),
+    receive 
+	{walk, BotPID, _Direction} ->
+	    Success2 = true
+    end,
+    BotPID ! exit,
+    ?assertEqual(true,Success2), 
     ?assertEqual(true,Success).
 
 loop_test() ->
     Main = self(),
-    LoopPID = spawn(fun() -> bot:initbot(Main,notneeded) end), %%Spawn a botloop process for testing
-    LoopPID ! {newposition, {10,1}},
+    BotPID = spawn(fun() -> bot:initbot(Main,Main) end), %%Spawn a botloop process for testing
+    BotPID ! {newposition, {10,1}},
     receive
-	{walk, LoopPID, _Direction1} ->
-	    Result1 = initiated
+	{walk, BotPID, Direction} ->
+	    DirectionList = [["w"],["a"],["s"],["d"]],
+	    Result = lists:filter(fun(X) -> X == Direction end, DirectionList),
+	    if 
+		Result == [] ->
+		    Success3 = false;
+		true ->
+		    Success3 = true
+	    end
     end,
-    receive
-	{walk, LoopPID, _Direction2} ->
-	    Result2 = moved
+    BotPID ! freeze,
+    BotPID ! unfreeze,
+    receive 
+	{unfreeze,BotPID} ->
+	    Success4 = true
     end,
-    exit(LoopPID,normal),
-    ?assertEqual({initiated,moved},{Result1,Result2}).
+    
+    BotPID ! freeze,
+    BotPID ! kill,
+    receive 
+	{unregister,BotPID} ->
+	    Success5 = true
+    end,
+
+    BotPID ! exit,
+
+    ?assertEqual(true,Success3),
+    ?assertEqual(true,Success4),
+    ?assertEqual(true,Success5).
 
