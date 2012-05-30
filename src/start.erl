@@ -18,3 +18,15 @@ start()->
     MapDict = dict:new(),
     FrozenDict = dict:new(),
     mainloop:mainloop([], MapDict,GUIPID,FrozenDict).
+
+restart(MainPID,GUIPID)->
+    spawn(fun()-> bot:initbot(MainPID,GUIPID) end),
+    timer:sleep(1000),
+    spawn(fun()-> bot:initbot(MainPID,GUIPID) end),
+    timer:sleep(1000),
+    spawn(fun()-> bot:initbot(MainPID,GUIPID) end),
+    timer:sleep(1000),
+    spawn(fun()-> human:inithuman(MainPID,GUIPID) end),
+    MapDict = dict:new(),
+    FrozenDict = dict:new(),
+    mainloop:mainloop([], MapDict,GUIPID,FrozenDict).
