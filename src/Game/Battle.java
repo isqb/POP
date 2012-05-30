@@ -1,17 +1,30 @@
+package Game;
+
 import com.ericsson.otp.erlang.OtpErlangPid;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import java.util.Random;
-import javax.swing.JFrame;
+
 
 /**
- * Starts a thread with JPanel battle between 2 character objects with a KeyListener 
- * for the actions performed by the "human" character object.
+ *	@author	Olof Björklund
+ *	@author	Mark Tibblin
+ *	@author	Luis Mauricio
+ *	@author	Marcus Utter
+ */
+
+/**
+ * Starts a thread of battle panel between 2 character objects with a 
+ * KeyListener for the actions performed by the "human" character object.
  * 
  */
 
@@ -23,7 +36,7 @@ public class Battle extends JPanel implements Runnable, KeyListener {
     private boolean fight = false, shoot = false;
     private int nr = 0;
     private float walkTopCounter = 10.0f, walkCounter = 0f;
-    private static final float WALKSPEED = 0.1f; // how quick you want to characters to walk
+    private static final float WALKSPEED = 0.1f; //how quick you want to characters to walk
     private Random generator = new Random();
     private OtpErlangPid cowboyPID, monsterPID;
     private ErlController erl;
@@ -36,12 +49,12 @@ public class Battle extends JPanel implements Runnable, KeyListener {
     
     public Battle() {
         
-        cowboy = new Cowboy(480,250,GridSimulate.createImageIcon("cowboyLeft.png"));
-        monster = new Monster(520,257,GridSimulate.createImageIcon("monsterRight.png"));
+        cowboy = new Cowboy(480,250,SuddenImpact.createImageIcon("cowboyLeft.png"));
+        monster = new Monster(520,257,SuddenImpact.createImageIcon("monsterRight.png"));
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
         this.setDoubleBuffered(true);
-        this.add(new JLabel(GridSimulate.createImageIcon("battle.jpg")));
+        this.add(new JLabel(SuddenImpact.createImageIcon("battle.jpg")));
 
     }
 
@@ -49,10 +62,10 @@ public class Battle extends JPanel implements Runnable, KeyListener {
         this.erl = erl;
         this.cowboyPID = cowboyPID;
         this.monsterPID = monsterPID;
-        this.cowboy = new Cowboy(480,250,GridSimulate.createImageIcon("cowboyLeft.png"));
-        this.monster = new Monster(520,257,GridSimulate.createImageIcon("monsterRight.png"));
+        this.cowboy = new Cowboy(480,250,SuddenImpact.createImageIcon("cowboyLeft.png"));
+        this.monster = new Monster(520,257,SuddenImpact.createImageIcon("monsterRight.png"));
         this.setBackground(Color.BLACK);
-        this.add(new JLabel(GridSimulate.createImageIcon("battle.jpg")));
+        this.add(new JLabel(SuddenImpact.createImageIcon("battle.jpg")));
         this.setFocusable(true);
         this.setDoubleBuffered(true);
     }
@@ -82,7 +95,7 @@ public class Battle extends JPanel implements Runnable, KeyListener {
     }
     
  /**
- * Kills the erlang node(process) depending on "shoot" or when random generator equals "n".
+ * Kills the erlang node(process) depending on "shoot" or "n".
  * 
  */
 
@@ -99,7 +112,7 @@ public class Battle extends JPanel implements Runnable, KeyListener {
                 break;
             } else if (n == random) {
                 monster.setImage("LeftShoot.png");
-                cowboy.setImage(GridSimulate.createImageIcon("grave.png"));
+                cowboy.setImage(SuddenImpact.createImageIcon("grave.png"));
                 repaint();
                 Thread.sleep(2000);
                 erl.kill(cowboyPID, monsterPID, this, cowboy, monster);
@@ -124,7 +137,7 @@ public class Battle extends JPanel implements Runnable, KeyListener {
         g2d.drawImage(cowboy.getImage(), (int)cowboy.getX(), (int)cowboy.getY(), this);
         g2d.drawImage(monster.getImage(), (int)monster.getX(), (int)monster.getY(), this);
         if (fight) {
-            g2d.drawImage(GridSimulate.createImageIcon("Shoot.png").getImage(), 400, 20, this); // sets the shoot image
+            g2d.drawImage(SuddenImpact.createImageIcon("Shoot.png").getImage(), 400, 20, this); // sets the shoot image
         }
 
         Toolkit.getDefaultToolkit().sync();

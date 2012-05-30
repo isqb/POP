@@ -1,14 +1,31 @@
+package Game;
+
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
-public class GridSimulate extends Thread implements WindowListener
+/**
+ *	@author	Olof Björklund
+ *	@author	Mark Tibblin
+ *	@author	Luis Mauricio
+ *	@author	Marcus Utter
+ */
+
+/**
+ * main class that starts the game by creating a thread of main, 
+ * implemented with a WindowListener for synchronizing with erlang code.
+ * 
+ */
+
+public class SuddenImpact extends Thread implements WindowListener
 {
     private static ErlController erl;
     private static String imgDir = "Graphics/";
 
-    public GridSimulate() {
+    ////Constructor////
+    
+    public SuddenImpact() {
             World world = new World();
             JFrame frame = new JFrame();
             frame.add(world);
@@ -22,9 +39,13 @@ public class GridSimulate extends Thread implements WindowListener
     }
     
     public static void main(String[] args) {
-            new GridSimulate();
+            new SuddenImpact();
     }
-
+/**
+ * Creates a ImageIcon according to filename.
+ * 
+ * @param path
+ */
     protected static ImageIcon createImageIcon(String path) {
         path = imgDir + path;
         java.net.URL imgURL = World.class.getResource(path);
@@ -36,26 +57,35 @@ public class GridSimulate extends Thread implements WindowListener
         }
     }
 
+    ////WindowListener components////
+    
+    @Override
     public void windowOpened(WindowEvent e) {
         System.out.println("Open that sh*t up!");
     }
 
+    @Override
     public void windowClosing(WindowEvent e) {
         erl.close();
     }
 
+    @Override
     public void windowClosed(WindowEvent e) {
     }
 
+    @Override
     public void windowIconified(WindowEvent e) {
     }
 
+    @Override
     public void windowDeiconified(WindowEvent e) {
     }
 
+    @Override
     public void windowActivated(WindowEvent e) {
     }
 
+    @Override
     public void windowDeactivated(WindowEvent e) {
     }
 }

@@ -1,12 +1,24 @@
+package Game;
+
+import Game.Char;
+import Game.Battle;
 import com.ericsson.otp.erlang.*;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 /**
- * Creates a write/listen ("messagepassing") for erlang nodes (processes) 
- * for game logics. 
+ *	@author	Olof Björklund
+ *	@author	Mark Tibblin
+ *	@author	Luis Mauricio
+ *	@author	Marcus Utter
+ */
+
+/**
+ * Creates a messagepassing link between java and erlang processers.
+ * 
  * 
  */
 
@@ -77,9 +89,9 @@ public class ErlController {
     {
         try {
             if (b != null) {
-                winner.setImage("RightShoot.png");
+                winner.setImage("Right.png");
                 loser.setY(loser.getY() - 10);
-                loser.setImage(GridSimulate.createImageIcon("grave.png"));
+                loser.setImage(SuddenImpact.createImageIcon("grave.png"));
 
                 b.repaint();
                 Thread.sleep(2000);

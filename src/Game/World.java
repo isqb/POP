@@ -1,3 +1,8 @@
+package Game;
+
+import Game.Cowboy;
+import Game.Char;
+import Game.Battle;
 import com.ericsson.otp.erlang.OtpErlangPid;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -11,6 +16,18 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+/**
+ *	@author	Olof Björklund
+ *	@author	Mark Tibblin
+ *	@author	Luis Mauricio
+ *	@author	Marcus Utter
+ */
+
+/**
+ * Creates a 2-dimensional world for gaming interaction.
+ *	
+ */
 
 public class World extends JPanel implements KeyListener  {
     
@@ -28,7 +45,7 @@ public class World extends JPanel implements KeyListener  {
       this.setBackground(Color.BLACK);
       this.setFocusable(true);
       this.setDoubleBuffered(true);
-      this.add(new JLabel(GridSimulate.createImageIcon("background.png")));
+      this.add(new JLabel(SuddenImpact.createImageIcon("background.png")));
       this.addKeyListener(this);
     }
 
@@ -53,7 +70,7 @@ public class World extends JPanel implements KeyListener  {
     }
 
  /**
- * Creates human and bot characters.
+ * Creates human or bot character.
  * 
  * 
  * @param pid 
@@ -65,11 +82,11 @@ public class World extends JPanel implements KeyListener  {
     public void createChar(int pid, double x, double y, boolean isHuman) {
 
         if (isHuman) {
-            ImageIcon image = GridSimulate.createImageIcon("cowboyDown.png");
+            ImageIcon image = SuddenImpact.createImageIcon("cowboyDown.png");
             chars.put(pid, new Cowboy(x, y, image));
         }
         else {
-            ImageIcon image = GridSimulate.createImageIcon("monsterDown.png");
+            ImageIcon image = SuddenImpact.createImageIcon("monsterDown.png");
             chars.put(pid, new Monster(x, y, image));
         }
 
@@ -128,6 +145,14 @@ public class World extends JPanel implements KeyListener  {
         new Thread(battle).start();
     }
     
+ /**
+ * Sets the battle status to "false" and changes image of loser of battle.
+ *
+ * 
+ * @param loser
+ * @param humanBattle 
+ */
+    
     public void endBattle(OtpErlangPid loser, boolean humanBattle) {
         
         if (humanBattle) {
@@ -135,14 +160,16 @@ public class World extends JPanel implements KeyListener  {
             inBattle = false;
         }
         Char ch = (Char)chars.get(loser.id());
-        ch.setImage(GridSimulate.createImageIcon("grave.png"));
+        ch.setImage(SuddenImpact.createImageIcon("grave.png"));
     }
     
     
-    public Hashtable getChars() {
-    return chars;
+    public Hashtable getChars() { 
+        return chars;
     }
 
+    //// KeyListener  methods////
+    
     public void setErlController(ErlController erl) {
         this.erl = erl;
     }
