@@ -1,18 +1,27 @@
 import com.ericsson.otp.erlang.OtpErlangPid;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 public class World extends JPanel implements KeyListener  {
     
-    private Hashtable chars = new Hashtable();
+    
+    private Hashtable chars = new Hashtable(); // Hasttable for charachter objects
     private boolean inBattle = false;
     private ErlController erl;
     private Battle battle;
     private JFrame battleFrame;
+    
+    //// Constructors////
     
     public World()
     {
@@ -23,14 +32,12 @@ public class World extends JPanel implements KeyListener  {
       this.addKeyListener(this);
     }
 
-    public Hashtable getChars() {
-        return chars;
-    }
 
-    public void setErlController(ErlController erl) {
-        this.erl = erl;
-    }
-    
+ /**
+ * Paints the World JPanel according to what ath the moment exists in Hashtable chars.
+ * 
+ * @param g
+ */
     @Override
     public void paint(Graphics g) 
     {
@@ -45,6 +52,16 @@ public class World extends JPanel implements KeyListener  {
         g.dispose();
     }
 
+ /**
+ * Creates human and bot characters.
+ * 
+ * 
+ * @param pid 
+ * @param x 
+ * @param y 
+ * @param isHuman 
+ */
+     
     public void createChar(int pid, double x, double y, boolean isHuman) {
 
         if (isHuman) {
@@ -58,6 +75,16 @@ public class World extends JPanel implements KeyListener  {
 
         this.repaint();
     }
+    
+    
+ /**
+ * Updates characters movements and images according to new x, y coordinates.
+ * 
+ * 
+ * @param character 
+ * @param newX
+ * @param newY
+ */
     
     public void move(Char character, double newX, double newY)
     {
@@ -83,10 +110,17 @@ public class World extends JPanel implements KeyListener  {
         character.setX(newX);
 
     	this.repaint();
-    	//Image image = cowboy.getImage();
+    	
     	
     }
 
+/**
+ * Initialize a new thread with a subclass Battle.
+ *
+ * @param cowboy
+ * @param monster
+ */
+    
     public void startBattle(OtpErlangPid cowboy, OtpErlangPid monster)
     {
         inBattle = true;
@@ -102,6 +136,15 @@ public class World extends JPanel implements KeyListener  {
         }
         Char ch = (Char)chars.get(loser.id());
         ch.setImage(GridSimulate.createImageIcon("grave.png"));
+    }
+    
+    
+    public Hashtable getChars() {
+    return chars;
+    }
+
+    public void setErlController(ErlController erl) {
+        this.erl = erl;
     }
         
     @Override

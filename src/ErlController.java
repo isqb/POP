@@ -4,8 +4,16 @@ import java.util.Hashtable;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+/**
+ * Creates a write/listen ("messagepassing") for erlang nodes (processes) 
+ * for game logics. 
+ * 
+ */
 
 public class ErlController {
+    
+    ////Parameters////
+    
     private String nodeName = "sigui";
     private String mBoxName = "gui";
     private OtpNode node;
@@ -15,8 +23,7 @@ public class ErlController {
     private World world;
     private boolean inBattle = false;
 
-	//Constuctor
-    public ErlController() {}
+    //// Constructors////
 
     public ErlController(World world) {
         this.world = world;
@@ -28,11 +35,22 @@ public class ErlController {
             Logger.getLogger(ErlController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+ /**
+ *Sends an atom "exit" to erlang node for closing down all erlang processes.
+ * 
+ */
 
     public void close() {
         mbox.send(mainPID, new OtpErlangAtom("exit"));
     }
 
+ /**
+ *Sends movement direction for playerPID process. 
+ * 
+ *@param direction 
+ */    
+    
     public void move(String direction) {
             OtpErlangAtom dir = new OtpErlangAtom(direction);
             OtpErlangObject[] o = new OtpErlangObject[]{new OtpErlangAtom("move"), dir};
@@ -40,6 +58,21 @@ public class ErlController {
             mbox.send(playerPID, tuple);
     }
 
+    
+    
+ /**
+ *
+ * Sends results from a Battle between 2 Char objects to erlang nodes, 
+ * also with necessery game logic parameters(atoms). 
+ * 
+ * @param loserPID
+ * @param winnerPID
+ * @param b
+ * @param loser 
+ * @param winner
+ */
+    
+   
     public void kill(OtpErlangPid loserPID, OtpErlangPid winnerPID, Battle b, Char loser, Char winner)
     {
         try {
@@ -64,6 +97,15 @@ public class ErlController {
         }
     }
 
+    
+ /**
+ * Initialize a thread with a new erlang listener, 
+ * atom messages such as "human", "battle" and "move" for visualizing 
+ * events accured in erlang.
+ * 
+ */
+    
+    
     public void run() {
         OtpErlangObject object;
         OtpErlangTuple msg;

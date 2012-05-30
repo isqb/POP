@@ -8,15 +8,16 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.util.Random;
 import javax.swing.JFrame;
-/*
- * To change this template, choose Tools | Templates and open the template in
- * the editor.
- */
 
 /**
- *
- * @author lokarburken
+ * Starts a thread with JPanel battle between 2 character objects with a KeyListener 
+ * for the actions performed by the "human" character object.
+ * 
  */
+
+
+
+
 public class Battle extends JPanel implements Runnable, KeyListener {
 
     private boolean fight = false, shoot = false;
@@ -29,6 +30,10 @@ public class Battle extends JPanel implements Runnable, KeyListener {
     private Cowboy cowboy;
     private Monster monster;
 
+    
+ 
+ //// Constructors////
+    
     public Battle() {
         
         cowboy = new Cowboy(480,250,GridSimulate.createImageIcon("cowboyLeft.png"));
@@ -52,10 +57,17 @@ public class Battle extends JPanel implements Runnable, KeyListener {
         this.setDoubleBuffered(true);
     }
 
+    
+ /**
+ *Initialize a thread with a new "battle" JFrame
+ * 
+ */
+    @Override
     public void run() {
         JFrame battleFrame = new JFrame();
         battleFrame.setAlwaysOnTop(true);
         battleFrame.add(this);
+        battleFrame.setTitle("Battle!!!");
         battleFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         battleFrame.setSize(1024, 320);
         battleFrame.setResizable(true);
@@ -68,6 +80,11 @@ public class Battle extends JPanel implements Runnable, KeyListener {
         }
         battleFrame.dispose();
     }
+    
+ /**
+ * Kills the erlang node(process) depending on "shoot" or when random generator equals "n".
+ * 
+ */
 
     public void fight() throws InterruptedException {
         fight = true;
@@ -86,13 +103,19 @@ public class Battle extends JPanel implements Runnable, KeyListener {
                 repaint();
                 Thread.sleep(2000);
                 erl.kill(cowboyPID, monsterPID, this, cowboy, monster);
-                System.out.println("You're dead.\nGame over...");
                 break;
             }
             n++;
         }
     }
 
+ /**
+ *Paints graphics for the JPanel Battle
+ * 
+ *@param g 
+ */
+    
+    
     @Override
     public void paint(Graphics g) {
         super.paint(g);
@@ -108,33 +131,44 @@ public class Battle extends JPanel implements Runnable, KeyListener {
         g.dispose();
     }
 
+    
+ /**
+ *Simulates JPanel movement in Battle.
+ * 
+ */
     public void actionPerformed() throws InterruptedException {
 
         Thread.sleep(1500);
         while (true) {
             Thread.sleep(100);
-            if (walkCounter < walkTopCounter - 0.1f) {
-                cowboy.setImage("Left.png");
-                monster.setImage("Right.png");
-                walkCounter += WALKSPEED;
-                if (nr == 0) {
-                    cowboy.setX(cowboy.getX() - 1);
-                    monster.setX(monster.getX() + 1);
-                    nr++;
-                } else if (nr == 1) {
-                    cowboy.setX(cowboy.getX() - 1);
-                    monster.setX(monster.getX() + 1);
-                    cowboy.setY(cowboy.getY() + 1);
-                    monster.setY(monster.getY() + 1);
-                    nr++;
-                } else {
-                    cowboy.setX(cowboy.getX() - 1);
-                    monster.setX(monster.getX() + 1);
-                    cowboy.setY(cowboy.getY() - 1);
-                    monster.setY(monster.getY() - 1);
-                    nr = 0;
-                }
-                if (cowboy.getX() == 450 && monster.getX() == 550) {
+            if (walkCounter < walkTopCounter - 0.1f) 
+                {
+                    cowboy.setImage("Left.png");
+                    monster.setImage("Right.png");
+                    walkCounter += WALKSPEED;
+                    if (nr == 0) 
+                        {
+                            cowboy.setX(cowboy.getX() - 1);
+                            monster.setX(monster.getX() + 1);
+                            nr++;
+                    } else if (nr == 1) 
+                        {
+                            cowboy.setX(cowboy.getX() - 1);
+                            monster.setX(monster.getX() + 1);
+                            cowboy.setY(cowboy.getY() + 1);
+                            monster.setY(monster.getY() + 1);
+                            nr++;
+                        } else 
+                            {
+                            cowboy.setX(cowboy.getX() - 1);
+                            monster.setX(monster.getX() + 1);
+                            cowboy.setY(cowboy.getY() - 1);
+                            monster.setY(monster.getY() - 1);
+                            nr = 0;
+                            }
+            
+                    
+                    if (cowboy.getX() == 450 && monster.getX() == 550) {
                     cowboy.setImage("Right.png");
                     monster.setImage("Left.png");
                     repaint();
@@ -150,9 +184,22 @@ public class Battle extends JPanel implements Runnable, KeyListener {
         }
     }
 
+    
+ /**
+ *
+ * 
+ */
+    
+    @Override
     public void keyTyped(KeyEvent e) {
     }
 
+ /**
+ *Listens to keys pressed in JPanel Battle
+ *@param e  
+ */
+    
+    @Override
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
         switch(keyCode) {
@@ -164,6 +211,7 @@ public class Battle extends JPanel implements Runnable, KeyListener {
         }
     }
 
+    @Override
     public void keyReleased(KeyEvent e) {
     }
 }
