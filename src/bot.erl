@@ -37,7 +37,7 @@ botloop(MainPID, GUIPID) ->
 		    MainPID ! {unfreeze, self()},
 		    botloop(MainPID,GUIPID);
 		kill ->
-		    MainPID ! {unregister, self()},
+		    MainPID ! {unregister, botdeath, self()},
 		    io:format("I'm dead (bot)")
 	    end;
 	exit ->

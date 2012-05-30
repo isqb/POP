@@ -8,15 +8,29 @@ mainloop(UserPIDs, MapDict,GUIPID,FrozenDict) ->
 	    MapDict2 = dict:store(Coordinates, PID, MapDict),
 	    FrozenDict2 = dict:store(PID,false, FrozenDict),
 	    mainloop([PID | UserPIDs], MapDict2,GUIPID,FrozenDict2);
-	{unregister, PID} ->
+	{unregister, botdeath, PID} ->
 	    MapDict2 = dict:erase(tools:getCoordinates(PID,MapDict),MapDict),
 	    FrozenDict2 = dict:erase(PID,FrozenDict),
 	    UserPIDs2 = lists:delete(PID,UserPIDs),
+	    LastPlayer = length(UserPIDs2) == 1,
+	    if LastPlayer ->
+		    Winner = lists:nth(1,UserPIDs2),
+		    GUIPID ! {gameover,botdeath,Winner,Winner,42,42}
+	    end,
+	    mainloop(UserPIDs2,MapDict2,GUIPID,FrozenDict2);
+	{unregister, humandeath, PID} ->
+	    MapDict2 = dict:erase(tools:getCoordinates(PID,MapDict),MapDict),
+	    FrozenDict2 = dict:erase(PID,FrozenDict),
+	    UserPIDs2 = lists:delete(PID,UserPIDs),
+	    GUIPID ! {gameover, humandeath, PID, PID, 42,42},
 	    mainloop(UserPIDs2,MapDict2,GUIPID,FrozenDict2);
 	{unfreeze, PID} ->
 	    FrozenDict2 = dict:store(PID,false,FrozenDict),
 	    PID ! {newposition, tools:getCoordinates(PID,MapDict)},
 	    mainloop(UserPIDs,MapDict,GUIPID,FrozenDict2);
+	restart ->
+	    tools:exitall(UserPIDs),
+	    start:start();
 	{walk, GunmanPID, Direction} ->
 	    {CoordinateX, CoordinateY} = tools:getCoordinates(GunmanPID, MapDict),
 	    case Direction of

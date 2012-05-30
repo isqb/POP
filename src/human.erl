@@ -38,7 +38,7 @@ humanloop(MainPID, GUIPID) ->
 		    MainPID ! {unfreeze, self()},
 		    humanloop(MainPID,GUIPID);
 		kill ->
-		    MainPID ! {unregister, self()},
+		    MainPID ! {unregister, humandeath, self()},
 		    io:format("I'm dead (Human)")
 	    end;
 	exit ->
