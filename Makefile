@@ -29,6 +29,7 @@ ebin/%.beam: src/Game/%.erl
 	$(ERLC) $(ERLC_FLAGS) -o ebin $<
 
 start: all
+	(java -jar "SuddenImpact.jar") &
 	(cd ebin && erl -sname "player" -eval 'start:start()')
 
 test: all
