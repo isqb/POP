@@ -124,7 +124,7 @@ public class ErlControllerTest implements Runnable {
     /**
      * Test of kill method, of class ErlController.
      */
-    @Test
+    /*@Test
     public void testKill() throws IOException, OtpErlangExit, OtpErlangDecodeException {
         System.out.println("kill");
         World world = new World();
@@ -154,7 +154,7 @@ public class ErlControllerTest implements Runnable {
         while (winnerTest.getAtom() == null);
         OtpErlangAtom winnerAtom = winnerTest.getAtom();
         assertEquals("unfreeze", winnerAtom.atomValue());
-    }
+    }*/
 
     public void run() {
         try {
