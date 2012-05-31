@@ -12,32 +12,29 @@ mainloop(UserPIDs, MapDict,GUIPID,FrozenDict) ->
 	    MapDict2 = dict:erase(tools:getCoordinates(PID,MapDict),MapDict),
 	    FrozenDict2 = dict:erase(PID,FrozenDict),
 	    UserPIDs2 = lists:delete(PID,UserPIDs),
+	    io:format("UserPIDs: ~p",[UserPIDs2]),
 	    LastPlayer = length(UserPIDs2)==1,
 	    io:format("Plar: ~p ~n", [LastPlayer]),
 	    if LastPlayer ->
 		    Winner = lists:nth(1,UserPIDs2),
 		    GUIPID ! {gameover,botdeath,Winner,Winner,42,42},
-		    tools:exitall(UserPIDs2),
-		    start:restart(self(),GUIPID);
-		    %%mainloop(UserPIDs2,MapDict2,GUIPID,FrozenDict2);
+		    reset(self(),GUIPID);
 	       true ->
-		    mainloop(UserPIDs2,MapDict2,GUIPID,FrozenDict2)
-	    end;
+		    io:format("")
+	    end,
+	    mainloop(UserPIDs2,MapDict2,GUIPID,FrozenDict2);
 	{unregister, humandeath, PID} ->
 	    MapDict2 = dict:erase(tools:getCoordinates(PID,MapDict),MapDict),
 	    FrozenDict2 = dict:erase(PID,FrozenDict),
 	    UserPIDs2 = lists:delete(PID,UserPIDs),
-	    GUIPID ! {gameover, humandeath, PID, PID, 42,42},
-	    tools:exitall(UserPIDs2),
-	    start:restart(self(),GUIPID);
-%%	    mainloop(UserPIDs2,MapDict2,GUIPID,FrozenDict2);
+	    MainPID = self(),
+	    PID ! exit,
+	    spawn(fun()-> human:inithuman(MainPID,GUIPID) end),
+	    mainloop(UserPIDs2,MapDict2,GUIPID,FrozenDict2);
 	{unfreeze, PID} ->
 	    FrozenDict2 = dict:store(PID,false,FrozenDict),
 	    PID ! {newposition, tools:getCoordinates(PID,MapDict)},
 	    mainloop(UserPIDs,MapDict,GUIPID,FrozenDict2);
-	restart ->
-	    tools:exitall(UserPIDs),
-	    start:restart(self(),GUIPID);
 	{walk, GunmanPID, Direction} ->
 	    {CoordinateX, CoordinateY} = tools:getCoordinates(GunmanPID, MapDict),
 	    case Direction of
@@ -75,3 +72,18 @@ mainloop(UserPIDs, MapDict,GUIPID,FrozenDict) ->
 	    io:format("Now exiting main with pid ~p~n",[self()]),
 	    halt()		
     end.
+
+reset(MainPID,GUIPID)->
+    spawn(fun()-> bot:initbot(MainPID,GUIPID) end),
+    timer:sleep(10),
+    spawn(fun()-> bot:initbot(MainPID,GUIPID) end),
+    timer:sleep(10),
+    spawn(fun()-> bot:initbot(MainPID,GUIPID) end).
+
+newDicts([],FrozenDict,MapDict) ->
+    {FrozenDict,MapDict};
+newDicts([PID|UserPIDs],FrozenDict,MapDict) ->
+    FrozenDict2 = dict:erase(PID,FrozenDict),
+    MapDict2 = dict:erase(tools:getCoordinates(PID,MapDict),MapDict),
+    newDicts(UserPIDs,FrozenDict2,MapDict2).
+
