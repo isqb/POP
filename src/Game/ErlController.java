@@ -1,7 +1,5 @@
 package Game;
 
-import Game.Char;
-import Game.Battle;
 import com.ericsson.otp.erlang.*;
 import java.io.IOException;
 import java.util.Hashtable;

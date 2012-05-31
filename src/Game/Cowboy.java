@@ -1,6 +1,5 @@
 package Game;
 
-import Game.Char;
 import javax.swing.ImageIcon;
 
 /**

@@ -5,15 +5,15 @@ GROUP_NUMBER := 01
 ERLC := erlc
 ERLC_FLAGS := -W -I include
 
-ERL_FILES := $(wildcard src/*.erl)
-BEAM_FILES := $(patsubst src/%.erl,ebin/%.beam,${ERL_FILES})
+ERL_FILES := $(wildcard src/Game/*.erl)
+BEAM_FILES := $(patsubst src/Game/%.erl,ebin/%.beam,${ERL_FILES})
 
 comma:= ,
 empty:=
 space:= $(empty) $(empty)
 
 EDOC_SRC := $(filter-out %_test.erl, $(ERL_FILES))
-EDOC_SRC_LIST := [$(subst $(space),$(comma),$(patsubst src/%.erl,'src/%.erl', $(EDOC_SRC)))]
+EDOC_SRC_LIST := [$(subst $(space),$(comma),$(patsubst src/Game/%.erl,'src/Game/%.erl', $(EDOC_SRC)))]
 
 REQUIRED_DIR_NAME := pop_2012_project_group_$(GROUP_NUMBER)
 
@@ -25,7 +25,7 @@ ARCHIVE_DIR := ..
 
 all: $(BEAM_FILES)
 
-ebin/%.beam: src/%.erl
+ebin/%.beam: src/Game/%.erl
 	$(ERLC) $(ERLC_FLAGS) -o ebin $<
 
 start: all
@@ -40,11 +40,11 @@ doc: $(BEAM_FILES)
 clean:
 	rm -fr .#* *.dump
 	rm -fr ebin/*.beam
-	rm -fr src/*.beam
+	rm -fr src/Game/*.beam
 	(cd doc/html && find . -name "*" -a ! -name overview.edoc -exec rm -rf {} \;)
 
 remove_finderinfo:
-	-xattr -d "com.apple.FinderInfo" src/*.erl include/*.hrl doc/* doc/html/*
+	-xattr -d "com.apple.FinderInfo" src/Game/*.erl include/*.hrl doc/* doc/html/*
 
 archive: clean
 ifeq ($(REQUIRED_DIR_NAME), $(PROJECT_DIR))

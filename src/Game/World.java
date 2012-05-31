@@ -1,8 +1,5 @@
 package Game;
 
-import Game.Cowboy;
-import Game.Char;
-import Game.Battle;
 import com.ericsson.otp.erlang.OtpErlangPid;
 import java.awt.Color;
 import java.awt.Graphics;
