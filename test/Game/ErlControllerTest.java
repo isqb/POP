@@ -173,17 +173,4 @@ public class ErlControllerTest implements Runnable {
             Logger.getLogger(ErlControllerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
-    /**
-     * Test of run method, of class ErlController.
-     */
-    /*@Test
-    public void testRun() throws IOException {
-        System.out.println("run");
-        ErlController erl = new ErlController(new World());
-        OtpMbox mbox = new OtpNode("testNode").createMbox("testMbox");
-        erl.run();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }*/
 }
