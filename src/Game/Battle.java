@@ -34,6 +34,7 @@ import javax.swing.JPanel;
 public class Battle extends JPanel implements Runnable, KeyListener {
 
     private boolean fight = false, shoot = false;
+    private boolean playerDead = false, monsterDead = false, test = false;
     private int nr = 0;
     private float walkTopCounter = 10.0f, walkCounter = 0f;
     private static final float WALKSPEED = 0.1f; //how quick you want to characters to walk
@@ -47,7 +48,7 @@ public class Battle extends JPanel implements Runnable, KeyListener {
  
  //// Constructors////
     
-    public Battle() {
+    public Battle(boolean test) {
         
         cowboy = new Cowboy(480,250,SuddenImpact.createImageIcon("cowboyLeft.png"));
         monster = new Monster(520,257,SuddenImpact.createImageIcon("monsterRight.png"));
@@ -55,6 +56,7 @@ public class Battle extends JPanel implements Runnable, KeyListener {
         this.setFocusable(true);
         this.setDoubleBuffered(true);
         this.add(new JLabel(SuddenImpact.createImageIcon("battle.jpg")));
+        this.test = test;
 
     }
 
@@ -68,6 +70,38 @@ public class Battle extends JPanel implements Runnable, KeyListener {
         this.add(new JLabel(SuddenImpact.createImageIcon("battle.jpg")));
         this.setFocusable(true);
         this.setDoubleBuffered(true);
+    }
+
+    /**
+     * Mainly used for testing.
+     * @return playerDead.
+     */
+    public boolean getPlayerDead() {
+        return playerDead;
+    }
+
+    /**
+     * Mainly used for testing.
+     * @return monsterDead.
+     */
+    public boolean getMonsterDead() {
+        return monsterDead;
+    }
+
+    /**
+     * Mainly used for testing.
+     * @return fight.
+     */
+    public boolean getFight() {
+        return fight;
+    }
+
+    /**
+     * Mainly used for testing.
+     * @param shoot - Decides whether the player shoots the monster or not.
+     */
+    public void setShoot(boolean shoot) {
+        this.shoot = shoot;
     }
 
     
@@ -101,25 +135,38 @@ public class Battle extends JPanel implements Runnable, KeyListener {
 
     public void fight() throws InterruptedException {
         fight = true;
+        Char loser = null;
         int n = 0;
         int random = generator.nextInt(30)+10;
-        repaint();
         while (true) {
             Thread.sleep(100);
 
             if (shoot) {
-                erl.kill(monsterPID, cowboyPID, this, monster, cowboy);
+                if (test) {
+                    monsterDead = true;
+                    return;
+                }
+                cowboy.setImage("RightShoot.png");
+                loser = monster;
+                erl.kill(monsterPID, cowboyPID);
                 break;
             } else if (n == random) {
+                if (test) {
+                    playerDead = true;
+                    return;
+                }
                 monster.setImage("LeftShoot.png");
-                cowboy.setImage(SuddenImpact.createImageIcon("grave.png"));
-                repaint();
-                Thread.sleep(2000);
-                erl.kill(cowboyPID, monsterPID, this, cowboy, monster);
+                loser = cowboy;
+                erl.kill(cowboyPID, monsterPID);
+                playerDead = true;
                 break;
             }
             n++;
         }
+        loser.setY(loser.getY() - 10);
+        loser.setImage(SuddenImpact.createImageIcon("grave.png"));
+        repaint();
+        Thread.sleep(2000);
     }
 
  /**

@@ -45,6 +45,32 @@ public class ErlController {
             Logger.getLogger(ErlController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    /**
+     * Mainly used for testing.
+     * @param mainPID - The PID used when closing.
+     */
+    public void setMainPID(OtpMbox mbox) {
+        this.mbox = mbox;
+        this.mainPID = mbox.self();
+    }
+
+    /**
+     * Mainly used for testing.
+     * @param playerPID - The PID used when moving the player.
+     */
+    public void setPlayerPID(OtpMbox mbox) {
+        this.mbox = mbox;
+        this.playerPID = mbox.self();
+    }
+
+    /**
+     * Mainly used for testing.
+     * @return mbox.
+     */
+    public OtpMbox getMbox() {
+        return mbox;
+    }
     
  /**
  *Sends an atom "exit" to erlang node for closing down all erlang processes.
@@ -83,28 +109,16 @@ public class ErlController {
  */
     
    
-    public void kill(OtpErlangPid loserPID, OtpErlangPid winnerPID, Battle b, Char loser, Char winner)
+    public void kill(OtpErlangPid loserPID, OtpErlangPid winnerPID)
     {
-        try {
-            if (b != null) {
-                winner.setImage("Right.png");
-                loser.setY(loser.getY() - 10);
-                loser.setImage(SuddenImpact.createImageIcon("grave.png"));
-
-                b.repaint();
-                Thread.sleep(2000);
-            }
-            boolean humanBattle = false;
-            if ((int) winnerPID.id() == (int) playerPID.id() || (int) loserPID.id() == (int) playerPID.id()) {
-                humanBattle = true;
-                inBattle = false;
-            }
-            world.endBattle(loserPID, humanBattle);
-            mbox.send(winnerPID, new OtpErlangAtom("unfreeze"));
-            mbox.send(loserPID, new OtpErlangAtom("kill"));
-        } catch (InterruptedException ex) {
-            Logger.getLogger(ErlController.class.getName()).log(Level.SEVERE, null, ex);
+        boolean humanBattle = false;
+        if ((int) winnerPID.id() == (int) playerPID.id() || (int) loserPID.id() == (int) playerPID.id()) {
+            humanBattle = true;
+            inBattle = false;
         }
+        world.endBattle(loserPID, humanBattle);
+        mbox.send(winnerPID, new OtpErlangAtom("unfreeze"));
+        mbox.send(loserPID, new OtpErlangAtom("kill"));
     }
 
     
@@ -167,10 +181,10 @@ public class ErlController {
                             Random gen = new Random();
                             int deadBot = gen.nextInt(2);
                             if (deadBot == 1) {
-                                kill(player1PID, player2PID, null, null, null);
+                                kill(player1PID, player2PID);
                             }
                             else {
-                                kill(player2PID, player1PID, null, null, null);
+                                kill(player2PID, player1PID);
                             }
                         }
                     }
