@@ -79,11 +79,3 @@ reset(MainPID,GUIPID)->
     spawn(fun()-> bot:initbot(MainPID,GUIPID) end),
     timer:sleep(10),
     spawn(fun()-> bot:initbot(MainPID,GUIPID) end).
-
-newDicts([],FrozenDict,MapDict) ->
-    {FrozenDict,MapDict};
-newDicts([PID|UserPIDs],FrozenDict,MapDict) ->
-    FrozenDict2 = dict:erase(PID,FrozenDict),
-    MapDict2 = dict:erase(tools:getCoordinates(PID,MapDict),MapDict),
-    newDicts(UserPIDs,FrozenDict2,MapDict2).
-
