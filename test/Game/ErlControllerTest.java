@@ -16,7 +16,10 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author Mark
+ * @author Marcus Utter
+ * @author Luis Mauricio
+ * @author Olof Björklund
+ * @author Mark Tibblin
  */
 public class ErlControllerTest implements Runnable {
 
@@ -86,36 +89,24 @@ public class ErlControllerTest implements Runnable {
         erl.setPlayerPID(erlTest.getMbox());
         
         erl.move(west);
-        /*OtpErlangObject o = mbox.receive();
-        OtpErlangTuple tuple = (OtpErlangTuple)o;
-        OtpErlangAtom atom = (OtpErlangAtom)tuple.elementAt(1);*/
         while (erlTest.getAtom() == null);
         assertEquals(west, erlTest.getAtom().atomValue());
         erlTest.resetAtom();
 
         new Thread(erlTest).start();
         erl.move(north);
-        /*o = mbox.receive();
-        tuple = (OtpErlangTuple)o;
-        atom = (OtpErlangAtom)tuple.elementAt(1);*/
         while (erlTest.getAtom() == null);
         assertEquals(north, erlTest.getAtom().atomValue());
         erlTest.resetAtom();
 
         new Thread(erlTest).start();
         erl.move(south);
-        /*o = mbox.receive();
-        tuple = (OtpErlangTuple)o;
-        atom = (OtpErlangAtom)tuple.elementAt(1);*/
         while (erlTest.getAtom() == null);
         assertEquals(south, erlTest.getAtom().atomValue());
         erlTest.resetAtom();
 
         new Thread(erlTest).start();
         erl.move(east);
-        /*o = mbox.receive();
-        tuple = (OtpErlangTuple)o;
-        atom = (OtpErlangAtom)tuple.elementAt(1);*/
         while (erlTest.getAtom() == null);
         assertEquals(east, erlTest.getAtom().atomValue());
         erlTest.resetAtom();
@@ -123,6 +114,13 @@ public class ErlControllerTest implements Runnable {
 
     /**
      * Test of kill method, of class ErlController.
+	 * The problem we're having here is that we need to have two mboxes that can recieve
+	 * a message saying if it lost or won the battle, and then they will have to have two
+	 * unique PIDs, but they don't have that. They both have the same PID which is 1, which
+	 * is weird in of itself.
+	 * But point is that this test case would most likely work as long as the two mboxes gets
+	 * two unique PIDs, so it's commented out to show that we haven't forgotten this method but
+	 * can't get it to work right for some reason.
      */
     /*@Test
     public void testKill() throws IOException, OtpErlangExit, OtpErlangDecodeException {

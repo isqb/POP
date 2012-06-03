@@ -12,7 +12,10 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author Mark
+ * @author Marcus Utter
+ * @author Luis Mauricio
+ * @author Olof Björklund
+ * @author Mark Tibblin
  */
 public class BattleTest {
     
