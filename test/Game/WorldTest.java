@@ -1,10 +1,5 @@
 package Game;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 import java.util.Enumeration;
 import java.util.Hashtable;
 import org.junit.AfterClass;
@@ -13,10 +8,9 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- *
  * @author Marcus Utter
  * @author Luis Mauricio
- * @author Olof Björklund
+ * @author Olof Bjï¿½rklund
  * @author Mark Tibblin
  */
 public class WorldTest {

@@ -1,10 +1,5 @@
 package Game;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 import com.ericsson.otp.erlang.*;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -15,10 +10,9 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- *
  * @author Marcus Utter
  * @author Luis Mauricio
- * @author Olof Björklund
+ * @author Olof Bjï¿½rklund
  * @author Mark Tibblin
  */
 public class ErlControllerTest implements Runnable {
