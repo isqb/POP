@@ -98,7 +98,8 @@ public class Battle extends JPanel implements Runnable, KeyListener {
     }
     
  /**
- * Kills the erlang node(process) depending on "shoot" or "n".
+ * Kills the character that loses by sending a kill atom message to erlang 
+ * process depending on "shoot" or "n".
  * 
  */
 
