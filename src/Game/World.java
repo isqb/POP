@@ -22,7 +22,7 @@ import javax.swing.JPanel;
  */
 
 /**
- * Creates a 2-dimensional world for gaming interaction.
+ * Creates a 2-dimensional world with character objects for gaming interaction.
  *	
  */
 
@@ -48,7 +48,7 @@ public class World extends JPanel implements KeyListener  {
 
 
  /**
- * Paints the World JPanel according to what ath the moment exists in Hashtable chars.
+ * Paints the World JPanel according to what at the moment exists in Hashtable chars.
  * 
  * @param g
  */
@@ -67,13 +67,13 @@ public class World extends JPanel implements KeyListener  {
     }
 
  /**
- * Creates human or bot character.
+ * Creates human or bot character and stores in Hasttable "chars".
  * 
  * 
- * @param pid 
- * @param x 
- * @param y 
- * @param isHuman 
+ * @param pid - Process number for character declared from erlang nodes
+ * @param x  - x coordinate
+ * @param y  - y coordinate
+ * @param isHuman - defines if bot or human character
  */
      
     public void createChar(int pid, double x, double y, boolean isHuman) {
@@ -96,8 +96,8 @@ public class World extends JPanel implements KeyListener  {
  * 
  * 
  * @param character 
- * @param newX
- * @param newY
+ * @param newX 
+ * @param newY 
  */
     
     public void move(Char character, double newX, double newY)
@@ -131,7 +131,7 @@ public class World extends JPanel implements KeyListener  {
 /**
  * Initialize a new thread with a subclass Battle.
  *
- * @param cowboy
+ * @param cowboy 
  * @param monster
  */
     
@@ -143,7 +143,7 @@ public class World extends JPanel implements KeyListener  {
     }
     
  /**
- * Sets the battle status to "false" and changes image of loser of battle.
+ * Sets the battle status to "false" and changes image of loser in battle.
  *
  * 
  * @param loser
@@ -160,12 +160,13 @@ public class World extends JPanel implements KeyListener  {
         ch.setImage(SuddenImpact.createImageIcon("grave.png"));
     }
     
+    ////get methods////
     
     public Hashtable getChars() { 
         return chars;
     }
 
-    //// KeyListener  methods////
+    ////KeyListener  components////
     
     public void setErlController(ErlController erl) {
         this.erl = erl;

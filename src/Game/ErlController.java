@@ -46,34 +46,8 @@ public class ErlController {
         }
     }
 
-    /**
-     * Mainly used for testing.
-     * @param mainPID - The PID used when closing.
-     */
-    public void setMainPID(OtpMbox mbox) {
-        this.mbox = mbox;
-        this.mainPID = mbox.self();
-    }
-
-    /**
-     * Mainly used for testing.
-     * @param playerPID - The PID used when moving the player.
-     */
-    public void setPlayerPID(OtpMbox mbox) {
-        this.mbox = mbox;
-        this.playerPID = mbox.self();
-    }
-
-    /**
-     * Mainly used for testing.
-     * @return mbox.
-     */
-    public OtpMbox getMbox() {
-        return mbox;
-    }
-    
  /**
- *Sends an atom "exit" to erlang node for closing down all erlang processes.
+ * Sends an atom "exit" to erlang node for closing down all erlang processes.
  * 
  */
 
@@ -82,7 +56,7 @@ public class ErlController {
     }
 
  /**
- *Sends movement direction for playerPID process. 
+ *Sends movement directions for erlang process. 
  * 
  *@param direction 
  */    
@@ -98,8 +72,8 @@ public class ErlController {
     
  /**
  *
- * Sends results from a Battle between 2 Char objects to erlang nodes, 
- * also with necessery game logic parameters(atoms). 
+ * Sends results from a Battle between 2 Char objects to erlang processers 
+ * by killing one and unfreezing one.
  * 
  * @param loserPID
  * @param winnerPID
@@ -123,9 +97,9 @@ public class ErlController {
 
     
  /**
- * Initialize a thread with a new erlang listener, 
- * atom messages such as "human", "battle" and "move" for visualizing 
- * events accured in erlang.
+ * Initialize a thread with a "erlang listener", 
+ * messages such as "human", "battle" and "move" for visualization of 
+ * event update accured in erlang.
  * 
  */
     
@@ -220,4 +194,31 @@ public class ErlController {
             }
         }
     }
+    
+        /**
+     * Mainly used for testing.
+     * @param mainPID - The PID used when closing.
+     */
+    public void setMainPID(OtpMbox mbox) {
+        this.mbox = mbox;
+        this.mainPID = mbox.self();
+    }
+
+    /**
+     * Mainly used for testing.
+     * @param playerPID - The PID used when moving the player.
+     */
+    public void setPlayerPID(OtpMbox mbox) {
+        this.mbox = mbox;
+        this.playerPID = mbox.self();
+    }
+
+    /**
+     * Mainly used for testing.
+     * @return mbox.
+     */
+    public OtpMbox getMbox() {
+        return mbox;
+    }
+    
 }

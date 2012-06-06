@@ -11,7 +11,7 @@ import javax.swing.ImageIcon;
  */
 
 /**
- * Super class for all in game character objects.
+ * Super class for all in game characters.
  * 
  */
 
@@ -19,12 +19,14 @@ public class Char {
     
     
     ////Parameters////
+    
     double x;
     double y;
     ImageIcon image;
 
     
     ////Contructor////
+    
     public Char(double x, double y, ImageIcon image) {
         this.x = x;
         this.y = y;
@@ -72,7 +74,9 @@ public class Char {
     	return image.getImage();
     }
 
-    
+    /**
+ * Character coordinates
+ */
     
     public String toString()
     {

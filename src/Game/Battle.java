@@ -33,6 +33,8 @@ import javax.swing.JPanel;
 
 public class Battle extends JPanel implements Runnable, KeyListener {
 
+    ////Parameters////
+    
     private boolean fight = false, shoot = false;
     private boolean playerDead = false, monsterDead = false, test = false;
     private int nr = 0;
@@ -46,7 +48,7 @@ public class Battle extends JPanel implements Runnable, KeyListener {
 
     
  
- //// Constructors////
+ ////Constructors////
     
     public Battle(boolean test) {
         
@@ -72,41 +74,8 @@ public class Battle extends JPanel implements Runnable, KeyListener {
         this.setDoubleBuffered(true);
     }
 
-    /**
-     * Mainly used for testing.
-     * @return playerDead.
-     */
-    public boolean getPlayerDead() {
-        return playerDead;
-    }
-
-    /**
-     * Mainly used for testing.
-     * @return monsterDead.
-     */
-    public boolean getMonsterDead() {
-        return monsterDead;
-    }
-
-    /**
-     * Mainly used for testing.
-     * @return fight.
-     */
-    public boolean getFight() {
-        return fight;
-    }
-
-    /**
-     * Mainly used for testing.
-     * @param shoot - Decides whether the player shoots the monster or not.
-     */
-    public void setShoot(boolean shoot) {
-        this.shoot = shoot;
-    }
-
-    
  /**
- *Initialize a thread with a new "battle" JFrame
+ * Initialize a thread with a new "battle" JFrame
  * 
  */
     @Override
@@ -227,7 +196,7 @@ public class Battle extends JPanel implements Runnable, KeyListener {
                             nr = 0;
                             }
             
-                    
+                    //shooting event
                     if (cowboy.getX() == 450 && monster.getX() == 550) {
                     cowboy.setImage("Right.png");
                     monster.setImage("Left.png");
@@ -245,10 +214,37 @@ public class Battle extends JPanel implements Runnable, KeyListener {
     }
 
     
- /**
- *
- * 
- */
+    /**
+     * Mainly used for testing.
+     * @return playerDead.
+     */
+    public boolean getPlayerDead() {
+        return playerDead;
+    }
+
+    /**
+     * Mainly used for testing.
+     * @return monsterDead.
+     */
+    public boolean getMonsterDead() {
+        return monsterDead;
+    }
+
+    /**
+     * Mainly used for testing.
+     * @return fight.
+     */
+    public boolean getFight() {
+        return fight;
+    }
+
+    /**
+     * Mainly used for testing.
+     * @param shoot - Decides whether the player shoots the monster or not.
+     */
+    public void setShoot(boolean shoot) {
+        this.shoot = shoot;
+    }
     
     @Override
     public void keyTyped(KeyEvent e) {

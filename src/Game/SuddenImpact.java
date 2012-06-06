@@ -13,8 +13,9 @@ import javax.swing.JFrame;
  */
 
 /**
- * main class that starts the game by creating a thread of main, 
- * implemented with a WindowListener for synchronizing with erlang code.
+ * main class that starts the game by creating a thread of main 
+ * implemented with WindowListener components for synchronization 
+ * with erlang node.
  * 
  */
 
@@ -44,7 +45,7 @@ public class SuddenImpact extends Thread implements WindowListener
 /**
  * Creates a ImageIcon according to filename.
  * 
- * @param path
+ * @param path - name of file e.g. "background.jpg"
  */
     protected static ImageIcon createImageIcon(String path) {
         path = imgDir + path;
