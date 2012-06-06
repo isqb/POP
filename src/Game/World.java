@@ -129,7 +129,7 @@ public class World extends JPanel implements KeyListener  {
     }
 
 /**
- * Initialize a new thread with a subclass Battle.
+ * Initialize a new thread with a Battle.
  *
  * @param cowboy 
  * @param monster

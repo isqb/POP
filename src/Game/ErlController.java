@@ -47,7 +47,7 @@ public class ErlController {
     }
 
  /**
- * Sends an atom "exit" to erlang node for closing down all erlang processes.
+ * Sends an "exit" atom to erlang node for closing down all erlang processes.
  * 
  */
 
