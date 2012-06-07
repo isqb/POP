@@ -18,7 +18,7 @@ Sudden Impact.
 
 ==== PROJECT DESCRIPTION ==== 
 
-Add a short description of your project here. 
+A simple action game with western scenery
 
 
 ==== GROUP MEMBERS ==== 
@@ -36,8 +36,9 @@ directory.
 However, you might want to get the most up to date version of this
 directory. 
 
-Add a description here on how to use Subversion, Git or similar to get
-the most up to date version of this directory. 
+To get the latest version of this repo simply clone from following url
+
+git@github.com:isqb/POP.git
 
 ==== ERLANG VERSION ====
 
@@ -62,16 +63,5 @@ To compile the project, simply type make and press enter.
 
 ==== TO RUN AND TEST THE SYSTEM ==== 
 
-Add a short description on how to run and test your system. Here you
-might give pointers to more details in the doc/final_presentation.pdf
-document. 
-
-If possible, add targets to the Makefile that can be used to start the
-system (make start, make start_server, make start_client or similar as
-necessary). 
-
-==== MORE INFORMATION (optional) ==== 
-
- * How to get more information about your project?
- * Who is the main contact person?
- * Do you have a project home page?
+Simply start the system by make start
+Test the system by make test and run the JUnit tests through NetBeans or similar.
