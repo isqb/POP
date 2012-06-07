@@ -48,7 +48,7 @@ loop_test() ->
     BotPID ! freeze,
     BotPID ! kill,
     receive 
-	{unregister,BotPID} ->
+	{unregister,botdeath, BotPID} ->
 	    Success5 = true
     end,
 

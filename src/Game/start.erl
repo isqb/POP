@@ -1,6 +1,12 @@
 -module(start).
 -export([start/0]).
 
+%%--------------------------------------------------------------------
+%% @doc Starts the game engine, setting up communication and spawning
+%%      three cpu-players and one human player then calls mainloop.
+%% @spec start()->none()
+%% @end
+%%--------------------------------------------------------------------
 start()->
     timer:sleep(1000),
     Main = self(),

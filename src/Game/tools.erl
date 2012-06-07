@@ -3,10 +3,11 @@
 
 %%--------------------------------------------------------------------
 %% @doc Checks the coordinates you want to go for nearby enemies,
-%%      if the coordinates are clear from enemies nearby then {true, _}
-%%      is returned, else {false, Opponent} is returned where Opponent
-%%      is the PID of the enemy nearby
-%% @spec checkMap(dict(),{int(),int()},pid()) -> none()
+%%      if no enemies has X-coordinates in the span (X-4,X+4) AND 
+%%      Y-cordinates in the span (Y-6,Y+6) then {true, _} is returned,
+%%      else {false, Opponent} is returned where Opponent is the PID of
+%%      the enemy nearby
+%% @spec checkMap(dict(),PlayerCoords::{X::int(),Y::int()},pid()) -> none()
 %% @end
 %%--------------------------------------------------------------------
 checkMap(MapDict, {CoordinateX,CoordinateY},GunmanPID) ->
@@ -77,8 +78,7 @@ walk(MapDict,OldCoordinates,NewCoordinates,GunmanPID,GUIPID,FrozenDict,UserPIDs)
 %%--------------------------------------------------------------------
 exitall([]) ->
     timer:sleep(1000),
-    io:format("All processes exited, now exiting main with pid ~p... Goodbye ~n",[self()]),
-    halt();
+    io:format("All child processes exited");
 exitall([PID | Rest]) ->
     PID ! exit,
     exitall(Rest).

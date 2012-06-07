@@ -1,6 +1,12 @@
 -module(mainloop).
 -export([mainloop/4]).
 
+%%--------------------------------------------------------------------
+%% @doc Mainloop listening to players and GUI, handling coordinates,
+%%      battles and registrations
+%% @spec mainloop(pid(),dict(),pid(),dict()) -> none()
+%% @end
+%%--------------------------------------------------------------------
 mainloop(UserPIDs, MapDict,GUIPID,FrozenDict) ->
     receive
 	{register, PID,Coordinates} ->
@@ -72,7 +78,11 @@ mainloop(UserPIDs, MapDict,GUIPID,FrozenDict) ->
 	    io:format("Now exiting main with pid ~p~n",[self()]),
 	    halt()		
     end.
-
+%%--------------------------------------------------------------------
+%% @doc Spawns three new bots 
+%% @spec reset(pid(),pid())->none()
+%% @end
+%%--------------------------------------------------------------------
 reset(MainPID,GUIPID)->
     spawn(fun()-> bot:initbot(MainPID,GUIPID) end),
     timer:sleep(10),

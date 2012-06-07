@@ -15,6 +15,7 @@ initbot(MainPID, GUIPID) ->
     Direction = lists:nth(random:uniform(4),[["w"],["a"],["d"],["s"]]),
     MainPID ! {walk, self(), Direction},
     botloop(MainPID, GUIPID).
+
 %%--------------------------------------------------------------------
 %% @doc Process for bots to listen for commands and signals. 
 %% @spec botloop(pid(),pid()) -> none()

@@ -69,7 +69,7 @@ humanloop_test() ->
     HumanPID ! freeze,
     HumanPID ! kill,
     receive
-	{unregister, HumanPID} ->
+	{unregister, humandeath, HumanPID} ->
 	    Result7 = killed
     end,
     HumanPID ! exit,

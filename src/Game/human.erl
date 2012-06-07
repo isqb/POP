@@ -1,10 +1,3 @@
-%%% @author marcus <marcus@laptopen>
-%%% @copyright (C) 2012, marcus
-%%% @doc
-%%%
-%%% @end
-%%% Created : 29 May 2012 by marcus <marcus@laptopen>
-
 -module(human).
 -export([inithuman/2,humanloop/2]).
 
